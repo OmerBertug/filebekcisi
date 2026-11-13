@@ -1,0 +1,110 @@
+[
+  {
+    "id": "gk-526e4003-bd0c-46d2-932d-fbf70bc2e9d7",
+    "fullName": "Ömer Bertuğ Tezel",
+    "district": "istanbul_kadikoy",
+    "age": 24,
+    "heightCm": 185,
+    "experienceLevel": "amateur",
+    "dominantHand": "right",
+    "matchFeeTry": 500,
+    "phone": "+90 5397260308",
+    "availableDays": [
+      "friday",
+      "saturday"
+    ],
+    "bio": "Agresif oynarım böyle kaleden kaleye vururum",
+    "rating": 5,
+    "completedMatches": 0,
+    "isVerified": false,
+    "createdAt": "2026-11-07T11:31:49.098Z"
+  },
+  {
+    "fullName": "Kerem Aksoy",
+    "district": "istanbul_kadikoy",
+    "age": 26,
+    "heightCm": 188,
+    "experienceLevel": "semi_pro",
+    "dominantHand": "right",
+    "matchFeeTry": 450,
+    "phone": "+90 532 410 22 11",
+    "availableDays": [
+      "tuesday",
+      "thursday",
+      "saturday",
+      "sunday"
+    ],
+    "bio": "Bölgesel Amatör Lig geçmişli kaleciyim. Bire bir pozisyonlarda hızlı çıkış ve geriden oyun kurma konusunda tecrübeliyim.",
+    "id": "gk-seed-001",
+    "rating": 4.9,
+    "completedMatches": 34,
+    "isVerified": true,
+    "createdAt": "2026-10-12T18:30:00.000Z"
+  },
+  {
+    "fullName": "Burak Yıldırım",
+    "district": "istanbul_besiktas",
+    "age": 23,
+    "heightCm": 184,
+    "experienceLevel": "academy",
+    "dominantHand": "left",
+    "matchFeeTry": 400,
+    "phone": "+90 544 812 90 34",
+    "availableDays": [
+      "monday",
+      "wednesday",
+      "friday",
+      "sunday"
+    ],
+    "bio": "6 yıl kulüp altyapı eğitimi aldım. Çizgi reflekslerim kuvvetlidir, maç saatinden 20 dakika önce sahada hazır olurum.",
+    "id": "gk-seed-002",
+    "rating": 4.8,
+    "completedMatches": 21,
+    "isVerified": true,
+    "createdAt": "2026-10-19T15:00:00.000Z"
+  },
+  {
+    "fullName": "Onur Çelik",
+    "district": "ankara_cankaya",
+    "age": 31,
+    "heightCm": 191,
+    "experienceLevel": "veteran",
+    "dominantHand": "both",
+    "matchFeeTry": 500,
+    "phone": "+90 505 673 19 82",
+    "availableDays": [
+      "wednesday",
+      "friday",
+      "saturday"
+    ],
+    "bio": "8 yıldır düzenli halı saha turnuvalarında kalecilik yapıyorum. Yan toplar ve savunma yönlendirmesi güçlü yönümdür.",
+    "id": "gk-seed-003",
+    "rating": 5,
+    "completedMatches": 48,
+    "isVerified": true,
+    "createdAt": "2026-10-25T20:15:00.000Z"
+  },
+  {
+    "fullName": "Efe Karahan",
+    "district": "izmir_karsiyaka",
+    "age": 21,
+    "heightCm": 182,
+    "experienceLevel": "amateur",
+    "dominantHand": "right",
+    "matchFeeTry": 300,
+    "phone": "+90 538 294 55 07",
+    "availableDays": [
+      "monday",
+      "tuesday",
+      "thursday",
+      "saturday",
+      "sunday"
+    ],
+    "bio": "Üniversite fakülte takımı kalecisiyim. Yakın mesafe şutlarda çevik ve enerjik oyun tarzına sahibim.",
+    "id": "gk-seed-004",
+    "rating": 4.7,
+    "completedMatches": 12,
+    "isVerified": true,
+    "createdAt": "2026-11-01T11:45:00.000Z"
+  }
+]

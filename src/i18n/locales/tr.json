@@ -1,0 +1,168 @@
+{
+  "meta": {
+    "brandName": "FileBekçisi",
+    "brandTagline": "Kurumsal Halı Saha Kaleci Aracılık Platformu",
+    "switchLocaleLabel": "Dil seçimi"
+  },
+  "nav": {
+    "browseGoalkeepers": "Kaleci Rehberi",
+    "registerAsGoalkeeper": "Kaleci Başvurusu",
+    "howItWorks": "Kurumsal Süreç"
+  },
+  "hero": {
+    "badge": "KURUMSAL KALECİ ARACILIK AĞI",
+    "title": "Müsabaka Organizasyonlarınız İçin Doğrulanmış Kaleci Ağı",
+    "subtitle": "Bölgenizdeki sicili doğrulanmış kaleci profillerini şeffaf komisyon yapısıyla inceleyin, müsabaka daveti oluşturun veya resmi kaleci portföyüne katılın.",
+    "primaryCta": "Kaleci Rehberini İncele",
+    "secondaryCta": "Kaleci Başvurusu Yap",
+    "commissionNote": "Kurumsal aracılık standardı: Kaleci net maç ücretini belirler; platform %15 sabit hizmet komisyonu ile güvenli eşleşme sağlar.",
+    "statsActiveKeepers": "Kayıtlı Kaleci",
+    "statsCommissionRate": "Sabit Hizmet Komisyonu",
+    "statsSafeEscrow": "Güvenli Eşleşme Garantisi",
+    "commissionPercentValue": "%15",
+    "safeEscrowValue": "7/24"
+  },
+  "howItWorks": {
+    "sectionTitle": "Kurumsal Eşleşme Süreci",
+    "step1Title": "01 / Bölge ve Takvim Filtreleme",
+    "step1Desc": "Müsabakanın gerçekleşeceği ilçeyi, maç gününü ve bütçe üst limitini belirleyerek uygun profilleri listeleyin.",
+    "step2Title": "02 / Şeffaf Maliyet Dökümü",
+    "step2Desc": "Kalecinin talep ettiği net müsabaka ücretini ve %15 kurumsal aracılık hizmet bedelini ayrıntılı olarak inceleyin.",
+    "step3Title": "03 / Resmi Müsabaka Daveti",
+    "step3Desc": "Seçtiğiniz kaleciye sistem üzerinden resmi davet iletin, müsabaka sonrası performans değerlendirmesi yapın."
+  },
+  "filters": {
+    "sectionTitle": "Kiralık Kaleci Rehberi",
+    "sectionSubtitle": "Müsabaka takvimine, lokasyona ve deneyim kademesine göre kayıtlı kaleci profillerini filtreleyin.",
+    "districtLabel": "İl / İlçe",
+    "allDistricts": "Tüm Bölgeler",
+    "experienceLabel": "Deneyim Seviyesi",
+    "allExperiences": "Tüm Seviyeler",
+    "dayLabel": "Maç Günü",
+    "allDays": "Tüm Günler",
+    "maxBudgetLabel": "Maks. Kaleci Ücreti",
+    "anyBudget": "Sınırsız",
+    "resetFilters": "Filtreleri Sıfırla",
+    "resultsCountSuffix": "kaleci listeleniyor",
+    "currencySymbol": "₺"
+  },
+  "card": {
+    "verifiedBadge": "Onaylı",
+    "newBadge": "Yeni",
+    "ageUnit": "yaş",
+    "heightUnit": "cm",
+    "matchesCompletedSuffix": "maç",
+    "dominantHandPrefix": "Baskın El:",
+    "availableDaysLabel": "Müsait Günler",
+    "goalkeeperFeeLabel": "Kaleci Ücreti",
+    "totalWithCommissionLabel": "Komisyon Dahil Toplam",
+    "inviteButton": "Maça Davet Et"
+  },
+  "grid": {
+    "loadingMessage": "Kaleci profilleri yükleniyor...",
+    "errorMessage": "Kaleci listesi alınırken bir bağlantı sorunu oluştu.",
+    "retryButton": "Tekrar Dene",
+    "emptyTitle": "Seçilen kriterlere uygun kaleci profili bulunamadı",
+    "emptyDescription": "Farklı bir ilçe, müsabaka günü veya bütçe üst sınırı seçerek aramayı genişletebilirsiniz."
+  },
+  "bookingModal": {
+    "title": "Maç Daveti ve Ücret Özeti",
+    "subtitle": "Aracılık komisyonu dahil ödeme dökümünü inceleyerek kaleciye resmi müsabaka daveti gönderebilirsiniz.",
+    "closeAriaLabel": "Pencereyi kapat",
+    "feeSummaryTitle": "Şeffaf Ücret Dökümü",
+    "goalkeeperNetLabel": "Kaleci Net Maç Ücreti",
+    "commissionLabel": "Platform Aracılık Komisyonu (%15)",
+    "totalPayableLabel": "Organizatör Toplam Ödemesi",
+    "contactPhoneLabel": "İletişim Numarası",
+    "organizerNotice": "Ödeme havuz (escrow) adımına geçildiğinde numara üzerinden maç saati ve saha konumu teyit edilir.",
+    "confirmRequestButton": "Eşleşme Talebi Oluştur",
+    "requestSentMessage": "Eşleşme talebiniz kayıt altına alındı. Kaleci onayının ardından bilgilendirileceksiniz."
+  },
+  "registration": {
+    "sectionBadge": "KALECİ BAŞVURU MERKEZİ",
+    "sectionTitle": "Kurumsal Kaleci Portföyüne Kayıt Olun",
+    "sectionSubtitle": "Uzmanlık kademenizi, müsaitlik takviminizi ve müsabaka başı net ücretinizi tanımlayarak organizatör davetlerine açılın.",
+    "fullNameLabel": "Ad Soyad",
+    "fullNamePlaceholder": "Örn: Mert Günok",
+    "phoneLabel": "Telefon Numarası",
+    "phonePlaceholder": "+90 555 123 45 67",
+    "districtLabel": "Oynayabileceğiniz Ana Bölge",
+    "ageLabel": "Yaş (16-60)",
+    "heightLabel": "Boy (cm)",
+    "experienceLabel": "Kalecilik Seviyesi",
+    "dominantHandLabel": "Baskın El",
+    "matchFeeLabel": "Müsabaka Başı Talep Edilen Net Ücret (₺)",
+    "feePreviewGoalkeeperGets": "Kaleciye Aktarılacak Net Tutar:",
+    "feePreviewOrganizerPays": "Organizatör Toplam Ödemesi (%15 komisyon dahil):",
+    "availableDaysLabel": "Müsait Günler",
+    "availableDaysHint": "Müsabaka daveti kabul edebileceğiniz tüm günleri işaretleyin.",
+    "bioLabel": "Kısa Kalecilik Tanıtımı",
+    "bioPlaceholder": "Reflekslerinizi, oyun kurma becerinizi ve geçmiş kulüp veya turnuva tecrübelerinizi kurumsal bir dille özetleyin (en az 15 karakter).",
+    "submitButton": "Kaleci Başvurusunu Kaydet",
+    "submittingButton": "Kaydediliyor...",
+    "successMessage": "Kaleci profiliniz başarıyla tescil edildi ve güncel rehberde yayına alındı."
+  },
+  "districts": {
+    "istanbul_kadikoy": "İstanbul - Kadıköy",
+    "istanbul_besiktas": "İstanbul - Beşiktaş",
+    "istanbul_sisli": "İstanbul - Şişli",
+    "istanbul_atasehir": "İstanbul - Ataşehir",
+    "istanbul_uskudar": "İstanbul - Üsküdar",
+    "istanbul_bakirkoy": "İstanbul - Bakırköy",
+    "ankara_cankaya": "Ankara - Çankaya",
+    "izmir_karsiyaka": "İzmir - Karşıyaka",
+    "bursa_nilufer": "Bursa - Nilüfer"
+  },
+  "experienceLevels": {
+    "amateur": "Amatör / Halı Saha Tutkunu",
+    "semi_pro": "Yarı Profesyonel / Bölgesel Lig",
+    "academy": "Altyapı / Kulüp Eğitimi",
+    "veteran": "Tecrübeli / 5+ Yıl Düzenli Kaleci"
+  },
+  "dominantHands": {
+    "right": "Sağ El",
+    "left": "Sol El",
+    "both": "Çift El"
+  },
+  "days": {
+    "monday": "Pazartesi",
+    "tuesday": "Salı",
+    "wednesday": "Çarşamba",
+    "thursday": "Perşembe",
+    "friday": "Cuma",
+    "saturday": "Cumartesi",
+    "sunday": "Pazar"
+  },
+  "daysShort": {
+    "monday": "Pzt",
+    "tuesday": "Sal",
+    "wednesday": "Çar",
+    "thursday": "Per",
+    "friday": "Cum",
+    "saturday": "Cmt",
+    "sunday": "Paz"
+  },
+  "validation": {
+    "invalid_name": "Ad soyad alanı 3 ile 60 karakter arasında olmalıdır.",
+    "invalid_district": "Lütfen geçerli bir ilçe seçin.",
+    "invalid_age": "Yaş 16 ile 60 arasında tam sayı olmalıdır.",
+    "invalid_height": "Boy 155 ile 215 cm arasında tam sayı olmalıdır.",
+    "invalid_experience": "Lütfen geçerli bir deneyim seviyesi seçin.",
+    "invalid_hand": "Lütfen baskın el bilgisini seçin.",
+    "invalid_fee": "Maç ücreti 100 ₺ ile 5000 ₺ arasında olmalıdır.",
+    "invalid_phone": "Geçerli bir telefon numarası girin (en az 10 hane).",
+    "empty_days": "En az bir müsait gün seçmelisiniz.",
+    "invalid_bio": "Tanıtım yazısı 15 ile 280 karakter arasında olmalıdır."
+  },
+  "apiErrors": {
+    "invalid_json": "Gönderilen veri biçimi geçersiz.",
+    "validation_failed": "Lütfen formdaki hatalı alanları kontrol edin.",
+    "storage_read_failed": "Kayıtlı kaleci verileri okunamadı.",
+    "storage_write_failed": "Profil kaydedilirken sunucu hatası oluştu.",
+    "network_error": "Sunucuya ulaşılamadı. Bağlantınızı kontrol edin."
+  },
+  "footer": {
+    "copyrightNotice": "© 2026 FileBekçisi. Tüm hakları saklıdır.",
+    "brokerageDisclaimer": "FileBekçisi, halı saha oyuncuları ile bağımsız kalecileri buluşturan dijital aracılık platformudur."
+  }
+}

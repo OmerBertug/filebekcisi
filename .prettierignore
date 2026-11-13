@@ -1,0 +1,9 @@
+node_modules
+.next
+coverage
+package-lock.json
+next-env.d.ts
+AI_GUIDELINES.md
+.agents
+graphify-out
+data/goalkeepers.json

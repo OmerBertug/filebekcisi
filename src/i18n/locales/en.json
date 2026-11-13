@@ -1,0 +1,168 @@
+{
+  "meta": {
+    "brandName": "FileBekcisi",
+    "brandTagline": "Institutional Turf Football Goalkeeper Brokerage",
+    "switchLocaleLabel": "Select language"
+  },
+  "nav": {
+    "browseGoalkeepers": "Goalkeeper Directory",
+    "registerAsGoalkeeper": "Goalkeeper Application",
+    "howItWorks": "Brokerage Process"
+  },
+  "hero": {
+    "badge": "INSTITUTIONAL GOALKEEPER BROKERAGE NETWORK",
+    "title": "Verified Goalkeeper Registry for Organized Turf Matches",
+    "subtitle": "Review vetted goalkeeper profiles across your district under transparent brokerage terms, dispatch match invitations, or register to the official roster.",
+    "primaryCta": "Explore Directory",
+    "secondaryCta": "Submit Goalkeeper Application",
+    "commissionNote": "Brokerage standard: Goalkeepers define their net match payout; the platform applies a fixed 15% intermediary commission.",
+    "statsActiveKeepers": "Registered Keepers",
+    "statsCommissionRate": "Fixed Brokerage Fee",
+    "statsSafeEscrow": "Match Availability",
+    "commissionPercentValue": "15%",
+    "safeEscrowValue": "24/7"
+  },
+  "howItWorks": {
+    "sectionTitle": "Brokerage Workflow",
+    "step1Title": "01 / District & Schedule Filtering",
+    "step1Desc": "Specify match location, preferred weekday, and maximum fee threshold to filter active roster profiles.",
+    "step2Title": "02 / Transparent Fee Breakdown",
+    "step2Desc": "Review the goalkeeper net match fee alongside the standardized 15% institutional brokerage commission.",
+    "step3Title": "03 / Formal Match Invitation",
+    "step3Desc": "Dispatch a match request through the registry and record a post-match performance rating."
+  },
+  "filters": {
+    "sectionTitle": "Goalkeeper Directory",
+    "sectionSubtitle": "Filter active goalkeepers by match schedule, district coverage, and experience tier.",
+    "districtLabel": "City / District",
+    "allDistricts": "All Districts",
+    "experienceLabel": "Experience Tier",
+    "allExperiences": "All Tiers",
+    "dayLabel": "Match Day",
+    "allDays": "All Days",
+    "maxBudgetLabel": "Max Keeper Fee",
+    "anyBudget": "No Limit",
+    "resetFilters": "Reset Filters",
+    "resultsCountSuffix": "goalkeepers listed",
+    "currencySymbol": "₺"
+  },
+  "card": {
+    "verifiedBadge": "Verified",
+    "newBadge": "New",
+    "ageUnit": "yrs",
+    "heightUnit": "cm",
+    "matchesCompletedSuffix": "matches",
+    "dominantHandPrefix": "Dominant Hand:",
+    "availableDaysLabel": "Available Days",
+    "goalkeeperFeeLabel": "Goalkeeper Fee",
+    "totalWithCommissionLabel": "Total Incl. Commission",
+    "inviteButton": "Invite to Match"
+  },
+  "grid": {
+    "loadingMessage": "Loading goalkeeper profiles...",
+    "errorMessage": "Unable to load goalkeeper directory due to a connection error.",
+    "retryButton": "Retry",
+    "emptyTitle": "No goalkeepers match the selected filters",
+    "emptyDescription": "Try widening your search by choosing another district, day, or budget limit."
+  },
+  "bookingModal": {
+    "title": "Match Invitation & Fee Breakdown",
+    "subtitle": "Review the brokerage fee calculation below to request this goalkeeper for your match.",
+    "closeAriaLabel": "Close modal",
+    "feeSummaryTitle": "Transparent Fee Breakdown",
+    "goalkeeperNetLabel": "Goalkeeper Net Match Fee",
+    "commissionLabel": "Platform Brokerage Fee (15%)",
+    "totalPayableLabel": "Organizer Total Payable",
+    "contactPhoneLabel": "Contact Phone",
+    "organizerNotice": "Once escrow booking is confirmed, kickoff time and turf venue details are verified via phone.",
+    "confirmRequestButton": "Submit Match Request",
+    "requestSentMessage": "Match request recorded! You will be notified once the goalkeeper confirms."
+  },
+  "registration": {
+    "sectionBadge": "GOALKEEPER APPLICATION CENTER",
+    "sectionTitle": "Register to the Official Goalkeeper Roster",
+    "sectionSubtitle": "Define your experience tier, weekly schedule, and net per-match fee to receive match invitations from organizers.",
+    "fullNameLabel": "Full Name",
+    "fullNamePlaceholder": "e.g. Emre Demir",
+    "phoneLabel": "Phone Number",
+    "phonePlaceholder": "+90 555 123 45 67",
+    "districtLabel": "Primary Match District",
+    "ageLabel": "Age (16-60)",
+    "heightLabel": "Height (cm)",
+    "experienceLabel": "Experience Tier",
+    "dominantHandLabel": "Dominant Hand",
+    "matchFeeLabel": "Requested Net Fee Per Match (₺)",
+    "feePreviewGoalkeeperGets": "Net goalkeeper payout:",
+    "feePreviewOrganizerPays": "Total organizer payment (incl. 15% fee):",
+    "availableDaysLabel": "Available Weekdays",
+    "availableDaysHint": "Select all weekdays on which you can accept match invitations.",
+    "bioLabel": "Short Goalkeeping Summary",
+    "bioPlaceholder": "Summarize your shot-stopping style, reflexes, and club or tournament background (15-280 chars).",
+    "submitButton": "Submit Goalkeeper Application",
+    "submittingButton": "Submitting...",
+    "successMessage": "Your goalkeeper profile has been recorded and published to the live directory."
+  },
+  "districts": {
+    "istanbul_kadikoy": "Istanbul - Kadikoy",
+    "istanbul_besiktas": "Istanbul - Besiktas",
+    "istanbul_sisli": "Istanbul - Sisli",
+    "istanbul_atasehir": "Istanbul - Atasehir",
+    "istanbul_uskudar": "Istanbul - Uskudar",
+    "istanbul_bakirkoy": "Istanbul - Bakirkoy",
+    "ankara_cankaya": "Ankara - Cankaya",
+    "izmir_karsiyaka": "Izmir - Karsiyaka",
+    "bursa_nilufer": "Bursa - Nilufer"
+  },
+  "experienceLevels": {
+    "amateur": "Amateur / Regular Turf Keeper",
+    "semi_pro": "Semi-Pro / Regional League",
+    "academy": "Youth Academy Trained",
+    "veteran": "Veteran / 5+ Years Active"
+  },
+  "dominantHands": {
+    "right": "Right Hand",
+    "left": "Left Hand",
+    "both": "Ambidextrous"
+  },
+  "days": {
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday"
+  },
+  "daysShort": {
+    "monday": "Mon",
+    "tuesday": "Tue",
+    "wednesday": "Wed",
+    "thursday": "Thu",
+    "friday": "Fri",
+    "saturday": "Sat",
+    "sunday": "Sun"
+  },
+  "validation": {
+    "invalid_name": "Full name must be between 3 and 60 characters.",
+    "invalid_district": "Please select a valid district.",
+    "invalid_age": "Age must be a whole number between 16 and 60.",
+    "invalid_height": "Height must be between 155 and 215 cm.",
+    "invalid_experience": "Please select a valid experience tier.",
+    "invalid_hand": "Please select a dominant hand preference.",
+    "invalid_fee": "Match fee must be between 100 ₺ and 5000 ₺.",
+    "invalid_phone": "Enter a valid phone number (10 to 18 digits).",
+    "empty_days": "Select at least one available weekday.",
+    "invalid_bio": "Bio must be between 15 and 280 characters."
+  },
+  "apiErrors": {
+    "invalid_json": "Submitted request body is not valid JSON.",
+    "validation_failed": "Please review and fix the highlighted form fields.",
+    "storage_read_failed": "Could not read stored goalkeeper profiles.",
+    "storage_write_failed": "Server failed to persist the goalkeeper profile.",
+    "network_error": "Unable to reach server. Please check your connection."
+  },
+  "footer": {
+    "copyrightNotice": "© 2026 FileBekcisi. All rights reserved.",
+    "brokerageDisclaimer": "FileBekcisi operates as an intermediary marketplace connecting turf match organizers with independent goalkeepers."
+  }
+}

@@ -1,0 +1,20 @@
+/* SPDX-License-Identifier: MIT */
+/* Copyright (c) 2026 Omer / FileBekcisi. All rights reserved. */
+
+@import 'tailwindcss';
+
+:root {
+  --surface-primary: #f8f8fa;
+  --surface-secondary: #e8e8ec;
+  --surface-card: #ffffff;
+  --ink-navy: #161540;
+  --ink-body: #4c4c4c;
+  --ink-muted: #636262;
+  --border-hairline: #dcdce2;
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: var(--surface-primary);
+  color: var(--ink-body);
+}
