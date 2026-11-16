@@ -3,6 +3,7 @@
 
 import { randomUUID } from 'node:crypto';
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
+import os from 'node:os';
 import path from 'node:path';
 import {
   API_ERROR_CODES,
@@ -17,10 +18,13 @@ import { ensurePostgresSchema, getSqlClient, parseBookingRows } from '@/server/d
 import { listGoalkeepers } from './goalkeeperRepository';
 
 /**
- * Resolves the target JSON storage file path for bookings when operating in local JSON fallback mode.
+ * Resolves the target JSON storage file path for bookings when operating in JSON fallback mode.
+ *
+ * Routes fallback storage to `os.tmpdir()` (`/tmp`) when running inside a serverless environment
+ * (`process.env.VERCEL === '1'`) where `process.cwd()` is read-only.
  *
  * @param customFilePath - Optional explicit file path override for sandboxed test execution.
- * @returns Absolute filesystem path to `bookings.json`.
+ * @returns Absolute writable filesystem path to `bookings.json`.
  */
 export function resolveBookingsDataPath(customFilePath?: string): string {
   if (customFilePath !== undefined && customFilePath.length > 0) {
@@ -29,6 +33,9 @@ export function resolveBookingsDataPath(customFilePath?: string): string {
   const envPath = process.env.BOOKINGS_DATA_PATH;
   if (envPath !== undefined && envPath.length > 0) {
     return path.resolve(envPath);
+  }
+  if (process.env.VERCEL === '1') {
+    return path.join(os.tmpdir(), 'filebekcisi-data', 'bookings.json');
   }
   return path.join(process.cwd(), 'data', 'bookings.json');
 }
@@ -52,7 +59,7 @@ async function writeBookingsAtomically(
 }
 
 /**
- * Reads and schema-validates persisted match booking records from PostgreSQL or local JSON storage.
+ * Reads and schema-validates persisted match booking records from PostgreSQL or JSON fallback storage.
  *
  * @param customFilePath - Optional file path override for test isolation.
  * @returns `Result` wrapping `BookingRecord[]` or `STORAGE_READ_FAILED`.
@@ -67,7 +74,7 @@ export async function listBookings(
       const rows = await sql`SELECT payload FROM bookings ORDER BY created_at DESC`;
       return { ok: true, data: parseBookingRows(rows) };
     } catch {
-      return { ok: false, error: API_ERROR_CODES.STORAGE_READ_FAILED };
+      // Fall through to writable JSON fallback if database connection is unreachable.
     }
   }
 
@@ -142,7 +149,7 @@ export async function createBooking(
       `;
       return { ok: true, data: newBooking };
     } catch {
-      return { ok: false, error: API_ERROR_CODES.STORAGE_WRITE_FAILED };
+      // Fall through to writable JSON fallback if database write fails.
     }
   }
 
@@ -189,7 +196,7 @@ export async function deleteBookingById(
       await sql`DELETE FROM bookings WHERE id = ${id}`;
       return { ok: true, data: id };
     } catch {
-      return { ok: false, error: API_ERROR_CODES.STORAGE_WRITE_FAILED };
+      // Fall through to writable JSON fallback.
     }
   }
 

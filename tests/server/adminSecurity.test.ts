@@ -10,13 +10,16 @@ import {
   deleteGoalkeeperById,
   listGoalkeepers,
   registerGoalkeeper,
+  resolveGoalkeepersDataPath,
   updateGoalkeeperVerification,
 } from '@/server/repositories/goalkeeperRepository';
 import {
   createBooking,
   deleteBookingById,
   listBookings,
+  resolveBookingsDataPath,
 } from '@/server/repositories/bookingRepository';
+import { resolveDatabaseUrl } from '@/server/db/postgresClient';
 import {
   createAdminSessionToken,
   verifyAdminPassword,
@@ -70,6 +73,32 @@ describe('adminAuth & rateLimiter security suite', () => {
 
     expect(isPayloadWithinLimit(smallReq)).toBe(true);
     expect(isPayloadWithinLimit(oversizedReq)).toBe(false);
+  });
+
+  it('routes JSON fallback paths to os.tmpdir() in serverless environments and detects postgres URLs', () => {
+    const previousVercel = process.env.VERCEL;
+    const previousCustomUrl = process.env.CUSTOM_NEON_URL;
+    try {
+      process.env.VERCEL = '1';
+      expect(resolveGoalkeepersDataPath().startsWith(os.tmpdir())).toBe(true);
+      expect(resolveBookingsDataPath().startsWith(os.tmpdir())).toBe(true);
+
+      process.env.CUSTOM_NEON_URL = 'postgresql://user:pass@ep-cool.us-east-1.aws.neon.tech/neondb';
+      expect(resolveDatabaseUrl()).toBe(
+        'postgresql://user:pass@ep-cool.us-east-1.aws.neon.tech/neondb',
+      );
+    } finally {
+      if (previousVercel === undefined) {
+        delete process.env.VERCEL;
+      } else {
+        process.env.VERCEL = previousVercel;
+      }
+      if (previousCustomUrl === undefined) {
+        delete process.env.CUSTOM_NEON_URL;
+      } else {
+        process.env.CUSTOM_NEON_URL = previousCustomUrl;
+      }
+    }
   });
 });
 

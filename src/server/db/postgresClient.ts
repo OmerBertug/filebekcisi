@@ -13,12 +13,8 @@ import {
   type GoalkeeperProfile,
 } from '@/domain/goalkeeper';
 
-const goalkeeperRowSchema = z.object({
-  payload: goalkeeperProfileSchema,
-});
-
-const bookingRowSchema = z.object({
-  payload: bookingRecordSchema,
+const rawRowSchema = z.object({
+  payload: z.unknown(),
 });
 
 const countRowSchema = z.object({
@@ -26,46 +22,63 @@ const countRowSchema = z.object({
 });
 
 let cachedSqlClient: NeonQueryFunction<false, false> | null = null;
+let cachedConnectionString: string | null = null;
 let schemaInitialized = false;
 
 /**
- * Resolves the active PostgreSQL connection string from `DATABASE_URL` or `POSTGRES_URL`.
+ * Resolves the active PostgreSQL connection string from standard or custom-prefixed Neon/Vercel
+ * environment variables (`DATABASE_URL`, `POSTGRES_URL`, `NEON_DATABASE_URL`, or any env var
+ * starting with `postgres://` or `postgresql://`).
  *
- * @returns Trimmed connection URL or `null` when no PostgreSQL database is configured.
+ * @returns Trimmed PostgreSQL connection URL or `null` when no database is configured.
  */
 export function resolveDatabaseUrl(): string | null {
-  const candidates = [process.env.DATABASE_URL, process.env.POSTGRES_URL];
-  for (const candidate of candidates) {
+  const priorityCandidates = [
+    process.env.DATABASE_URL,
+    process.env.POSTGRES_URL,
+    process.env.NEON_DATABASE_URL,
+    process.env.DATABASE_URL_UNPOOLED,
+    process.env.POSTGRES_URL_NON_POOLING,
+  ];
+
+  for (const candidate of priorityCandidates) {
     if (candidate !== undefined && candidate.trim().length > 0) {
       return candidate.trim();
     }
   }
+
+  for (const [, value] of Object.entries(process.env)) {
+    if (
+      value !== undefined &&
+      (value.startsWith('postgres://') || value.startsWith('postgresql://'))
+    ) {
+      return value.trim();
+    }
+  }
+
   return null;
 }
 
 /**
  * Lazily initializes and returns the Neon serverless SQL tagged-template executor.
  *
- * Safe at Next.js build time because `neon()` is only invoked when `DATABASE_URL` or
- * `POSTGRES_URL` is present at runtime.
- *
- * @returns Configured `NeonQueryFunction` or `null` when running in local JSON fallback mode.
+ * @returns Configured `NeonQueryFunction` or `null` when running in local/tmp JSON fallback mode.
  */
 export function getSqlClient(): NeonQueryFunction<false, false> | null {
   const connectionString = resolveDatabaseUrl();
   if (connectionString === null) {
     return null;
   }
-  if (cachedSqlClient === null) {
+  if (cachedSqlClient === null || cachedConnectionString !== connectionString) {
     cachedSqlClient = neon(connectionString);
+    cachedConnectionString = connectionString;
+    schemaInitialized = false;
   }
   return cachedSqlClient;
 }
 
 /**
  * Seeds the `goalkeepers` PostgreSQL table from `data/goalkeepers.json` when the table is empty.
- *
- * @param sql - Active Neon SQL query function.
  */
 async function seedInitialGoalkeepersIfNeeded(sql: NeonQueryFunction<false, false>): Promise<void> {
   const countRows = await sql`SELECT COUNT(*)::int AS total FROM goalkeepers`;
@@ -129,6 +142,25 @@ export async function ensurePostgresSchema(sql: NeonQueryFunction<false, false>)
 }
 
 /**
+ * Unwraps a raw SQL row's `payload` column whether the driver returns a parsed object or JSON text.
+ */
+function unwrapRowPayload(row: unknown): unknown {
+  const parsedRow = rawRowSchema.safeParse(row);
+  if (!parsedRow.success) {
+    return null;
+  }
+  const rawPayload = parsedRow.data.payload;
+  if (typeof rawPayload === 'string') {
+    try {
+      return JSON.parse(rawPayload);
+    } catch {
+      return null;
+    }
+  }
+  return rawPayload;
+}
+
+/**
  * Validates raw SQL rows returned from the `goalkeepers` table using `goalkeeperProfileSchema`.
  *
  * @param rows - Untrusted row objects returned by the Neon driver.
@@ -137,9 +169,10 @@ export async function ensurePostgresSchema(sql: NeonQueryFunction<false, false>)
 export function parseGoalkeeperRows(rows: readonly unknown[]): GoalkeeperProfile[] {
   const validated: GoalkeeperProfile[] = [];
   for (const row of rows) {
-    const parsed = goalkeeperRowSchema.safeParse(row);
+    const candidate = unwrapRowPayload(row);
+    const parsed = goalkeeperProfileSchema.safeParse(candidate);
     if (parsed.success) {
-      validated.push(parsed.data.payload);
+      validated.push(parsed.data);
     }
   }
   return validated;
@@ -154,9 +187,10 @@ export function parseGoalkeeperRows(rows: readonly unknown[]): GoalkeeperProfile
 export function parseBookingRows(rows: readonly unknown[]): BookingRecord[] {
   const validated: BookingRecord[] = [];
   for (const row of rows) {
-    const parsed = bookingRowSchema.safeParse(row);
+    const candidate = unwrapRowPayload(row);
+    const parsed = bookingRecordSchema.safeParse(candidate);
     if (parsed.success) {
-      validated.push(parsed.data.payload);
+      validated.push(parsed.data);
     }
   }
   return validated;
