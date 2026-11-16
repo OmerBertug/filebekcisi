@@ -5,3 +5,8 @@ next-env.d.ts
 *.tsbuildinfo
 graphify-out/
 .env*.local
+.agents/
+AGENTS.md
+AI_GUIDELINES.md
+knowledge/
+memory-bank/
