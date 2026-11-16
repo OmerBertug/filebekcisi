@@ -5,25 +5,49 @@ import { FILTER_ALL_VALUE, PLATFORM_COMMISSION_RATE } from './constants';
 import type { FeeBreakdown, GoalkeeperFilterCriteria, GoalkeeperProfile } from './types';
 
 /**
- * Computes the brokerage commission and total organizer payment for a given goalkeeper fee.
+ * Computes the dual-sided 15% brokerage commission breakdown for a given goalkeeper listed fee:
+ * - Goalkeeper receives 15% less than the listed fee (`goalkeeperNetPayoutTry = listedFeeTry - 15%`).
+ * - Directory cards display the listed fee (`listedFeeTry`).
+ * - Customers pay 15% commission on top of the listed fee at checkout (`totalPayableTry = listedFeeTry + 15%`).
  *
- * Applies `PLATFORM_COMMISSION_RATE` (15%) and rounds to the nearest whole TRY integer to
- * prevent floating-point rounding discrepancies in UI summaries and payment requests.
- * Clamps negative inputs to zero as a defensive mathematical invariant.
- *
- * @param matchFeeTry - Base per-match fee set by the goalkeeper in TRY.
- * @returns `FeeBreakdown` containing goalkeeper payout, platform commission, and total payable TRY.
+ * @param matchFeeTry - Listed per-match fee set by the goalkeeper in TRY.
+ * @returns `FeeBreakdown` containing listed fee, goalkeeper net payout, customer fee, and platform revenue.
  */
 export function calculateMatchFeeBreakdown(matchFeeTry: number): FeeBreakdown {
-  const sanitizedBaseFee = Number.isFinite(matchFeeTry) ? Math.max(0, Math.round(matchFeeTry)) : 0;
-  const platformCommissionTry = Math.round(sanitizedBaseFee * PLATFORM_COMMISSION_RATE);
-  const totalPayableTry = sanitizedBaseFee + platformCommissionTry;
+  const listedFeeTry = Number.isFinite(matchFeeTry) ? Math.max(0, Math.round(matchFeeTry)) : 0;
+  const goalkeeperCutTry = Math.round(listedFeeTry * PLATFORM_COMMISSION_RATE);
+  const goalkeeperNetPayoutTry = Math.max(0, listedFeeTry - goalkeeperCutTry);
+  const customerCommissionTry = Math.round(listedFeeTry * PLATFORM_COMMISSION_RATE);
+  const totalPayableTry = listedFeeTry + customerCommissionTry;
+  const platformTotalRevenueTry = goalkeeperCutTry + customerCommissionTry;
 
   return {
-    goalkeeperFeeTry: sanitizedBaseFee,
-    platformCommissionTry,
+    listedFeeTry,
+    goalkeeperCutTry,
+    goalkeeperNetPayoutTry,
+    customerCommissionTry,
     totalPayableTry,
+    platformTotalRevenueTry,
+    goalkeeperFeeTry: listedFeeTry,
+    platformCommissionTry: customerCommissionTry,
   };
+}
+
+/**
+ * Masks the middle digits of a phone number for public display prior to booking confirmation
+ * so automated scrapers cannot harvest goalkeeper contact numbers.
+ *
+ * @param phone - Raw goalkeeper phone number string.
+ * @returns Masked phone representation preserving country/area prefix and last two digits.
+ */
+export function maskPhoneNumber(phone: string): string {
+  const trimmed = phone.trim();
+  if (trimmed.length <= 6) {
+    return '***';
+  }
+  const prefix = trimmed.slice(0, Math.min(7, trimmed.length - 2));
+  const suffix = trimmed.slice(-2);
+  return `${prefix} *** ** ${suffix}`;
 }
 
 /**

@@ -4,6 +4,7 @@
 import type {
   API_ERROR_CODES,
   AVAILABLE_DAYS,
+  BOOKING_STATUSES,
   DISTRICT_CODES,
   DOMINANT_HANDS,
   EXPERIENCE_LEVELS,
@@ -49,6 +50,11 @@ export type ValidationErrorCode =
 export type ApiErrorCode = (typeof API_ERROR_CODES)[keyof typeof API_ERROR_CODES];
 
 /**
+ * Union type representing booking status (`confirmed` | `cancelled`).
+ */
+export type BookingStatus = (typeof BOOKING_STATUSES)[number];
+
+/**
  * Discriminated union representing a fallible operation outcome without throwing exceptions.
  *
  * @template TData - Value payload returned when `ok` is `true`.
@@ -75,7 +81,7 @@ export interface GoalkeeperProfile {
   readonly experienceLevel: ExperienceLevel;
   /** Dominant hand preference. */
   readonly dominantHand: DominantHand;
-  /** Base per-match fee requested by the goalkeeper in Turkish Lira (TRY). */
+  /** Listed per-match price set by the goalkeeper in Turkish Lira (TRY). */
   readonly matchFeeTry: number;
   /** Contact phone number shared with match organizers upon booking confirmation. */
   readonly phone: string;
@@ -120,15 +126,61 @@ export interface GoalkeeperFilterCriteria {
 }
 
 /**
- * Transparent financial calculation detailing goalkeeper payout and intermediary commission.
+ * Dual-sided 15% financial calculation detailing listed price, goalkeeper net payout (-15%),
+ * customer checkout commission (+15%), total customer payable, and combined platform revenue.
  */
 export interface FeeBreakdown {
-  /** Net fee requested by and payable to the goalkeeper in TRY. */
-  readonly goalkeeperFeeTry: number;
-  /** Platform brokerage commission amount in TRY (rounded to nearest integer). */
-  readonly platformCommissionTry: number;
-  /** Total amount payable by the match organizer in TRY (`goalkeeperFeeTry + platformCommissionTry`). */
+  /** Listed match fee set by the goalkeeper and shown on directory cards in TRY (e.g. 500). */
+  readonly listedFeeTry: number;
+  /** 15% commission deducted from the goalkeeper's listed fee in TRY (e.g. 75). */
+  readonly goalkeeperCutTry: number;
+  /** Net payout the goalkeeper receives after 15% deduction (`listedFeeTry - goalkeeperCutTry`, e.g. 425). */
+  readonly goalkeeperNetPayoutTry: number;
+  /** 15% service commission added to the customer checkout total in TRY (e.g. 75). */
+  readonly customerCommissionTry: number;
+  /** Total amount payable by the customer at checkout (`listedFeeTry + customerCommissionTry`, e.g. 575). */
   readonly totalPayableTry: number;
+  /** Total platform revenue combining goalkeeper cut and customer commission (`goalkeeperCutTry + customerCommissionTry`, e.g. 150). */
+  readonly platformTotalRevenueTry: number;
+  /** Alias for `listedFeeTry` preserved for backward compatibility. */
+  readonly goalkeeperFeeTry: number;
+  /** Alias for `customerCommissionTry` preserved for backward compatibility. */
+  readonly platformCommissionTry: number;
+}
+
+/**
+ * Validated payload submitted when a customer purchases/books a goalkeeper for a match.
+ */
+export interface CreateBookingInput {
+  readonly goalkeeperId: string;
+  readonly organizerName: string;
+  readonly organizerPhone: string;
+  readonly venueName: string;
+  readonly matchDate: AvailableDay;
+  readonly matchTime: string;
+}
+
+/**
+ * Persisted match booking / purchase record stored in PostgreSQL or JSON fallback.
+ */
+export interface BookingRecord {
+  readonly id: string;
+  readonly goalkeeperId: string;
+  readonly goalkeeperName: string;
+  readonly goalkeeperPhone: string;
+  readonly district: DistrictCode;
+  readonly organizerName: string;
+  readonly organizerPhone: string;
+  readonly venueName: string;
+  readonly matchDate: AvailableDay;
+  readonly matchTime: string;
+  readonly listedFeeTry: number;
+  readonly goalkeeperNetPayoutTry: number;
+  readonly customerCommissionTry: number;
+  readonly totalPayableTry: number;
+  readonly platformTotalRevenueTry: number;
+  readonly status: BookingStatus;
+  readonly createdAt: string;
 }
 
 /**
@@ -139,7 +191,12 @@ export type RegistrationFieldErrors = Partial<
 >;
 
 /**
- * Discriminated JSON envelope returned by `/api/goalkeepers` and `/api/admin/*` endpoints.
+ * Field-keyed map of validation error codes returned when booking checkout input fails validation.
+ */
+export type BookingFieldErrors = Partial<Record<keyof CreateBookingInput, ValidationErrorCode>>;
+
+/**
+ * Discriminated JSON envelope returned by `/api/goalkeepers`, `/api/bookings`, and `/api/admin/*`.
  *
  * @template TPayload - Expected payload type when `ok` is `true`.
  */
@@ -148,7 +205,7 @@ export type GoalkeeperApiResponse<TPayload> =
   | {
       readonly ok: false;
       readonly errorCode: ApiErrorCode;
-      readonly fieldErrors?: RegistrationFieldErrors;
+      readonly fieldErrors?: RegistrationFieldErrors | BookingFieldErrors;
     };
 
 /**

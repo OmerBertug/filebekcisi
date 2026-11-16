@@ -13,12 +13,14 @@ import {
   type GoalkeeperProfile,
   type Result,
 } from '@/domain/goalkeeper';
+import {
+  ensurePostgresSchema,
+  getSqlClient,
+  parseGoalkeeperRows,
+} from '@/server/db/postgresClient';
 
 /**
- * Resolves the target JSON storage file path.
- *
- * Honors `customFilePath` first (used by isolated integration tests), then falls back to
- * `process.env.GOALKEEPERS_DATA_PATH`, and finally defaults to `<cwd>/data/goalkeepers.json`.
+ * Resolves the target JSON storage file path when operating in local JSON fallback mode.
  *
  * @param customFilePath - Optional explicit file path override for sandboxed test execution.
  * @returns Absolute filesystem path to the JSON goalkeeper store.
@@ -35,10 +37,26 @@ export function resolveGoalkeepersDataPath(customFilePath?: string): string {
 }
 
 /**
- * Reads and schema-validates persisted goalkeeper profiles from disk.
- *
- * Returns an empty array if the storage file does not yet exist (`ENOENT`), enabling clean
- * first-boot initialization without throwing unhandled I/O exceptions.
+ * Atomically writes the full goalkeeper profile collection to local JSON storage.
+ */
+async function writeGoalkeepersAtomically(
+  profiles: readonly GoalkeeperProfile[],
+  filePath: string,
+): Promise<Result<void, ApiErrorCode>> {
+  try {
+    await mkdir(path.dirname(filePath), { recursive: true });
+    const tempPath = `${filePath}.${randomUUID()}.tmp`;
+    await writeFile(tempPath, `${JSON.stringify(profiles, null, 2)}\n`, 'utf-8');
+    await rename(tempPath, filePath);
+    return { ok: true, data: undefined };
+  } catch {
+    return { ok: false, error: API_ERROR_CODES.STORAGE_WRITE_FAILED };
+  }
+}
+
+/**
+ * Reads and schema-validates persisted goalkeeper profiles from PostgreSQL (when `DATABASE_URL`
+ * is configured and no test override path is given) or local JSON storage.
  *
  * @param customFilePath - Optional file path override for test isolation.
  * @returns `Result` wrapping the validated `GoalkeeperProfile[]` list or `STORAGE_READ_FAILED`.
@@ -46,17 +64,24 @@ export function resolveGoalkeepersDataPath(customFilePath?: string): string {
 export async function listGoalkeepers(
   customFilePath?: string,
 ): Promise<Result<GoalkeeperProfile[], ApiErrorCode>> {
-  const filePath = resolveGoalkeepersDataPath(customFilePath);
+  const sql = customFilePath === undefined ? getSqlClient() : null;
+  if (sql !== null) {
+    try {
+      await ensurePostgresSchema(sql);
+      const rows = await sql`SELECT payload FROM goalkeepers ORDER BY created_at DESC`;
+      return { ok: true, data: parseGoalkeeperRows(rows) };
+    } catch {
+      return { ok: false, error: API_ERROR_CODES.STORAGE_READ_FAILED };
+    }
+  }
 
+  const filePath = resolveGoalkeepersDataPath(customFilePath);
   try {
     const rawContent = await readFile(filePath, 'utf-8');
-    const parsedJson: unknown = JSON.parse(rawContent);
-    const validated = goalkeeperListSchema.safeParse(parsedJson);
-
+    const validated = goalkeeperListSchema.safeParse(JSON.parse(rawContent));
     if (!validated.success) {
       return { ok: false, error: API_ERROR_CODES.STORAGE_READ_FAILED };
     }
-
     return { ok: true, data: validated.data };
   } catch (error: unknown) {
     if (error instanceof Error && 'code' in error && error.code === 'ENOENT') {
@@ -67,37 +92,7 @@ export async function listGoalkeepers(
 }
 
 /**
- * Atomically writes the full goalkeeper profile collection to JSON storage.
- *
- * Writes to a sibling temporary file before renaming over the target file so concurrent readers
- * never observe truncated JSON payloads.
- *
- * @param profiles - Complete ordered array of `GoalkeeperProfile` entities to persist.
- * @param filePath - Absolute destination path for the JSON dataset.
- * @returns `Result` indicating success (`undefined`) or `STORAGE_WRITE_FAILED`.
- */
-async function writeGoalkeepersAtomically(
-  profiles: readonly GoalkeeperProfile[],
-  filePath: string,
-): Promise<Result<void, ApiErrorCode>> {
-  try {
-    const directory = path.dirname(filePath);
-    await mkdir(directory, { recursive: true });
-
-    const tempPath = `${filePath}.${randomUUID()}.tmp`;
-    const serialized = `${JSON.stringify(profiles, null, 2)}\n`;
-    await writeFile(tempPath, serialized, 'utf-8');
-    await rename(tempPath, filePath);
-
-    return { ok: true, data: undefined };
-  } catch {
-    return { ok: false, error: API_ERROR_CODES.STORAGE_WRITE_FAILED };
-  }
-}
-
-/**
- * Creates a new persisted `GoalkeeperProfile` from validated registration input and prepends it
- * to the directory dataset so newly registered goalkeepers appear first.
+ * Creates a new persisted `GoalkeeperProfile` in PostgreSQL or local JSON storage.
  *
  * @param input - Sanitized goalkeeper self-registration attributes.
  * @param customFilePath - Optional file path override for isolated test suites.
@@ -107,13 +102,6 @@ export async function registerGoalkeeper(
   input: CreateGoalkeeperInput,
   customFilePath?: string,
 ): Promise<Result<GoalkeeperProfile, ApiErrorCode>> {
-  const filePath = resolveGoalkeepersDataPath(customFilePath);
-  const existingResult = await listGoalkeepers(filePath);
-
-  if (!existingResult.ok) {
-    return existingResult;
-  }
-
   const newProfile: GoalkeeperProfile = {
     id: `gk-${randomUUID()}`,
     fullName: input.fullName,
@@ -132,13 +120,33 @@ export async function registerGoalkeeper(
     createdAt: new Date().toISOString(),
   };
 
-  const updatedProfiles: GoalkeeperProfile[] = [newProfile, ...existingResult.data];
-  const writeResult = await writeGoalkeepersAtomically(updatedProfiles, filePath);
+  const sql = customFilePath === undefined ? getSqlClient() : null;
+  if (sql !== null) {
+    try {
+      await ensurePostgresSchema(sql);
+      await sql`
+        INSERT INTO goalkeepers (id, payload, created_at)
+        VALUES (${newProfile.id}, ${JSON.stringify(newProfile)}::jsonb, ${newProfile.createdAt}::timestamptz)
+      `;
+      return { ok: true, data: newProfile };
+    } catch {
+      return { ok: false, error: API_ERROR_CODES.STORAGE_WRITE_FAILED };
+    }
+  }
 
+  const filePath = resolveGoalkeepersDataPath(customFilePath);
+  const existingResult = await listGoalkeepers(filePath);
+  if (!existingResult.ok) {
+    return existingResult;
+  }
+
+  const writeResult = await writeGoalkeepersAtomically(
+    [newProfile, ...existingResult.data],
+    filePath,
+  );
   if (!writeResult.ok) {
     return writeResult;
   }
-
   return { ok: true, data: newProfile };
 }
 
@@ -155,9 +163,7 @@ export async function updateGoalkeeperVerification(
   isVerified: boolean,
   customFilePath?: string,
 ): Promise<Result<GoalkeeperProfile, ApiErrorCode>> {
-  const filePath = resolveGoalkeepersDataPath(customFilePath);
-  const existingResult = await listGoalkeepers(filePath);
-
+  const existingResult = await listGoalkeepers(customFilePath);
   if (!existingResult.ok) {
     return existingResult;
   }
@@ -168,24 +174,35 @@ export async function updateGoalkeeperVerification(
     return { ok: false, error: API_ERROR_CODES.NOT_FOUND };
   }
 
-  const updatedProfile: GoalkeeperProfile = {
-    ...existingProfile,
-    isVerified,
-  };
+  const updatedProfile: GoalkeeperProfile = { ...existingProfile, isVerified };
+  const sql = customFilePath === undefined ? getSqlClient() : null;
+
+  if (sql !== null) {
+    try {
+      await sql`
+        UPDATE goalkeepers
+        SET payload = ${JSON.stringify(updatedProfile)}::jsonb
+        WHERE id = ${id}
+      `;
+      return { ok: true, data: updatedProfile };
+    } catch {
+      return { ok: false, error: API_ERROR_CODES.STORAGE_WRITE_FAILED };
+    }
+  }
+
+  const filePath = resolveGoalkeepersDataPath(customFilePath);
   const updatedList = existingResult.data.map((item, idx) =>
     idx === targetIndex ? updatedProfile : item,
   );
-
   const writeResult = await writeGoalkeepersAtomically(updatedList, filePath);
   if (!writeResult.ok) {
     return writeResult;
   }
-
   return { ok: true, data: updatedProfile };
 }
 
 /**
- * Deletes a persisted goalkeeper profile identified by `id` from JSON storage.
+ * Deletes a persisted goalkeeper profile identified by `id` from PostgreSQL or JSON storage.
  *
  * @param id - Target goalkeeper profile identifier to remove.
  * @param customFilePath - Optional file path override for isolated test suites.
@@ -195,9 +212,7 @@ export async function deleteGoalkeeperById(
   id: string,
   customFilePath?: string,
 ): Promise<Result<string, ApiErrorCode>> {
-  const filePath = resolveGoalkeepersDataPath(customFilePath);
-  const existingResult = await listGoalkeepers(filePath);
-
+  const existingResult = await listGoalkeepers(customFilePath);
   if (!existingResult.ok) {
     return existingResult;
   }
@@ -207,10 +222,20 @@ export async function deleteGoalkeeperById(
     return { ok: false, error: API_ERROR_CODES.NOT_FOUND };
   }
 
+  const sql = customFilePath === undefined ? getSqlClient() : null;
+  if (sql !== null) {
+    try {
+      await sql`DELETE FROM goalkeepers WHERE id = ${id}`;
+      return { ok: true, data: id };
+    } catch {
+      return { ok: false, error: API_ERROR_CODES.STORAGE_WRITE_FAILED };
+    }
+  }
+
+  const filePath = resolveGoalkeepersDataPath(customFilePath);
   const writeResult = await writeGoalkeepersAtomically(remaining, filePath);
   if (!writeResult.ok) {
     return writeResult;
   }
-
   return { ok: true, data: id };
 }

@@ -231,13 +231,13 @@ export function RegistrationSportFields(props: RegistrationSportFieldsProps): Re
         <span>
           {dictionary.registration.feePreviewGoalkeeperGets}{' '}
           <strong className="font-normal">
-            {feePreview.goalkeeperFeeTry} {currency}
+            {feePreview.goalkeeperNetPayoutTry} {currency}
           </strong>
         </span>
         <span>
           {dictionary.registration.feePreviewOrganizerPays}{' '}
           <strong className="font-normal">
-            {feePreview.totalPayableTry} {currency}
+            {feePreview.listedFeeTry} {currency}
           </strong>
         </span>
       </div>

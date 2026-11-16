@@ -55,25 +55,40 @@ const SAMPLE_PROFILES: readonly GoalkeeperProfile[] = [
 ];
 
 describe('calculateMatchFeeBreakdown', () => {
-  it('computes 15 percent commission and total payable amount accurately', () => {
+  it('computes dual-sided 15 percent commission (-15% keeper payout, +15% customer total)', () => {
     const breakdown = calculateMatchFeeBreakdown(400);
     expect(breakdown).toEqual({
+      listedFeeTry: 400,
+      goalkeeperCutTry: 60,
+      goalkeeperNetPayoutTry: 340,
+      customerCommissionTry: 60,
+      totalPayableTry: 460,
+      platformTotalRevenueTry: 120,
       goalkeeperFeeTry: 400,
       platformCommissionTry: 60,
-      totalPayableTry: 460,
     });
   });
 
   it('clamps negative or non-finite inputs to zero', () => {
     expect(calculateMatchFeeBreakdown(-250)).toEqual({
+      listedFeeTry: 0,
+      goalkeeperCutTry: 0,
+      goalkeeperNetPayoutTry: 0,
+      customerCommissionTry: 0,
+      totalPayableTry: 0,
+      platformTotalRevenueTry: 0,
       goalkeeperFeeTry: 0,
       platformCommissionTry: 0,
-      totalPayableTry: 0,
     });
     expect(calculateMatchFeeBreakdown(Number.NaN)).toEqual({
+      listedFeeTry: 0,
+      goalkeeperCutTry: 0,
+      goalkeeperNetPayoutTry: 0,
+      customerCommissionTry: 0,
+      totalPayableTry: 0,
+      platformTotalRevenueTry: 0,
       goalkeeperFeeTry: 0,
       platformCommissionTry: 0,
-      totalPayableTry: 0,
     });
   });
 });

@@ -7,4 +7,5 @@ AI_GUIDELINES.md
 .agents
 graphify-out
 data/goalkeepers.json
+data/bookings.json
 .env*

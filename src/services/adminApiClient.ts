@@ -4,15 +4,19 @@
 import { z } from 'zod';
 import {
   API_ERROR_CODES,
+  bookingListSchema,
   goalkeeperProfileSchema,
   type AdminSessionStatus,
   type ApiErrorCode,
+  type BookingRecord,
   type GoalkeeperProfile,
   type Result,
 } from '@/domain/goalkeeper';
 
 const ADMIN_SESSION_ENDPOINT = '/api/admin/session';
 const ADMIN_GOALKEEPERS_ENDPOINT = '/api/admin/goalkeepers';
+const BOOKINGS_ENDPOINT = '/api/bookings';
+const ADMIN_BOOKINGS_ENDPOINT = '/api/admin/bookings';
 
 const apiErrorCodeSchema = z.enum([
   API_ERROR_CODES.INVALID_JSON,
@@ -48,7 +52,7 @@ const patchVerificationResponseSchema = z.discriminatedUnion('ok', [
   }),
 ]);
 
-const deleteGoalkeeperResponseSchema = z.discriminatedUnion('ok', [
+const deleteEntityResponseSchema = z.discriminatedUnion('ok', [
   z.object({
     ok: z.literal(true),
     data: z.object({ id: z.string() }),
@@ -59,11 +63,19 @@ const deleteGoalkeeperResponseSchema = z.discriminatedUnion('ok', [
   }),
 ]);
 
+const getBookingsResponseSchema = z.discriminatedUnion('ok', [
+  z.object({
+    ok: z.literal(true),
+    data: bookingListSchema,
+  }),
+  z.object({
+    ok: z.literal(false),
+    errorCode: apiErrorCodeSchema,
+  }),
+]);
+
 /**
  * Checks whether the current browser session holds a valid `HttpOnly` administrator cookie.
- *
- * @param signal - Optional `AbortSignal` to cancel the request on component unmount.
- * @returns `Result` resolving to `AdminSessionStatus` or an `ApiErrorCode`.
  */
 export async function fetchAdminSession(
   signal?: AbortSignal,
@@ -74,9 +86,7 @@ export async function fetchAdminSession(
       headers: { Accept: 'application/json' },
       signal,
     });
-    const rawPayload: unknown = await response.json();
-    const parsed = sessionResponseSchema.safeParse(rawPayload);
-
+    const parsed = sessionResponseSchema.safeParse(await response.json());
     if (!parsed.success) {
       return { ok: false, error: API_ERROR_CODES.NETWORK_ERROR };
     }
@@ -94,9 +104,6 @@ export async function fetchAdminSession(
 
 /**
  * Submits the administrator password to `POST /api/admin/session` to establish a signed cookie.
- *
- * @param password - Administrator password entered in the login console.
- * @returns `Result` resolving to `AdminSessionStatus` or an `ApiErrorCode`.
  */
 export async function loginAdmin(
   password: string,
@@ -104,15 +111,10 @@ export async function loginAdmin(
   try {
     const response = await fetch(ADMIN_SESSION_ENDPOINT, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
       body: JSON.stringify({ password }),
     });
-    const rawPayload: unknown = await response.json();
-    const parsed = sessionResponseSchema.safeParse(rawPayload);
-
+    const parsed = sessionResponseSchema.safeParse(await response.json());
     if (!parsed.success) {
       return { ok: false, error: API_ERROR_CODES.NETWORK_ERROR };
     }
@@ -127,8 +129,6 @@ export async function loginAdmin(
 
 /**
  * Terminates the active administrator session by calling `DELETE /api/admin/session`.
- *
- * @returns `Result` resolving to `AdminSessionStatus` or an `ApiErrorCode`.
  */
 export async function logoutAdmin(): Promise<Result<AdminSessionStatus, ApiErrorCode>> {
   try {
@@ -136,9 +136,7 @@ export async function logoutAdmin(): Promise<Result<AdminSessionStatus, ApiError
       method: 'DELETE',
       headers: { Accept: 'application/json' },
     });
-    const rawPayload: unknown = await response.json();
-    const parsed = sessionResponseSchema.safeParse(rawPayload);
-
+    const parsed = sessionResponseSchema.safeParse(await response.json());
     if (!parsed.success || !parsed.data.ok) {
       return { ok: false, error: API_ERROR_CODES.NETWORK_ERROR };
     }
@@ -150,10 +148,6 @@ export async function logoutAdmin(): Promise<Result<AdminSessionStatus, ApiError
 
 /**
  * Toggles the verification badge (`isVerified`) of a goalkeeper profile via `PATCH /api/admin/goalkeepers/[id]`.
- *
- * @param id - Target goalkeeper profile identifier.
- * @param isVerified - Desired verification status boolean.
- * @returns `Result` containing the updated `GoalkeeperProfile` or an `ApiErrorCode`.
  */
 export async function setGoalkeeperVerification(
   id: string,
@@ -162,15 +156,10 @@ export async function setGoalkeeperVerification(
   try {
     const response = await fetch(`${ADMIN_GOALKEEPERS_ENDPOINT}/${encodeURIComponent(id)}`, {
       method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
       body: JSON.stringify({ isVerified }),
     });
-    const rawPayload: unknown = await response.json();
-    const parsed = patchVerificationResponseSchema.safeParse(rawPayload);
-
+    const parsed = patchVerificationResponseSchema.safeParse(await response.json());
     if (!parsed.success) {
       return { ok: false, error: API_ERROR_CODES.STORAGE_WRITE_FAILED };
     }
@@ -185,9 +174,6 @@ export async function setGoalkeeperVerification(
 
 /**
  * Deletes a goalkeeper profile from storage via `DELETE /api/admin/goalkeepers/[id]`.
- *
- * @param id - Target goalkeeper profile identifier to remove.
- * @returns `Result` resolving to the deleted `id` or an `ApiErrorCode`.
  */
 export async function removeGoalkeeper(id: string): Promise<Result<string, ApiErrorCode>> {
   try {
@@ -195,9 +181,57 @@ export async function removeGoalkeeper(id: string): Promise<Result<string, ApiEr
       method: 'DELETE',
       headers: { Accept: 'application/json' },
     });
-    const rawPayload: unknown = await response.json();
-    const parsed = deleteGoalkeeperResponseSchema.safeParse(rawPayload);
+    const parsed = deleteEntityResponseSchema.safeParse(await response.json());
+    if (!parsed.success) {
+      return { ok: false, error: API_ERROR_CODES.STORAGE_WRITE_FAILED };
+    }
+    if (!parsed.data.ok) {
+      return { ok: false, error: parsed.data.errorCode };
+    }
+    return { ok: true, data: parsed.data.data.id };
+  } catch {
+    return { ok: false, error: API_ERROR_CODES.NETWORK_ERROR };
+  }
+}
 
+/**
+ * Fetches all customer match bookings for the `/admin` console via `GET /api/bookings`.
+ */
+export async function fetchAdminBookings(
+  signal?: AbortSignal,
+): Promise<Result<BookingRecord[], ApiErrorCode>> {
+  try {
+    const response = await fetch(BOOKINGS_ENDPOINT, {
+      method: 'GET',
+      headers: { Accept: 'application/json' },
+      signal,
+    });
+    const parsed = getBookingsResponseSchema.safeParse(await response.json());
+    if (!parsed.success) {
+      return { ok: false, error: API_ERROR_CODES.STORAGE_READ_FAILED };
+    }
+    if (!parsed.data.ok) {
+      return { ok: false, error: parsed.data.errorCode };
+    }
+    return { ok: true, data: parsed.data.data };
+  } catch (error: unknown) {
+    if (error instanceof DOMException && error.name === 'AbortError') {
+      throw error;
+    }
+    return { ok: false, error: API_ERROR_CODES.NETWORK_ERROR };
+  }
+}
+
+/**
+ * Deletes a match booking record via `DELETE /api/admin/bookings/[id]`.
+ */
+export async function removeBooking(id: string): Promise<Result<string, ApiErrorCode>> {
+  try {
+    const response = await fetch(`${ADMIN_BOOKINGS_ENDPOINT}/${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+      headers: { Accept: 'application/json' },
+    });
+    const parsed = deleteEntityResponseSchema.safeParse(await response.json());
     if (!parsed.success) {
       return { ok: false, error: API_ERROR_CODES.STORAGE_WRITE_FAILED };
     }

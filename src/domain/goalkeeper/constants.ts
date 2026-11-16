@@ -71,6 +71,10 @@ export const VALIDATION_ERROR_CODES = {
   INVALID_PHONE: 'invalid_phone',
   EMPTY_DAYS: 'empty_days',
   INVALID_BIO: 'invalid_bio',
+  INVALID_ORGANIZER_NAME: 'invalid_organizer_name',
+  INVALID_VENUE_NAME: 'invalid_venue_name',
+  INVALID_MATCH_DATE: 'invalid_match_date',
+  INVALID_MATCH_TIME: 'invalid_match_time',
 } as const;
 
 /**
@@ -130,3 +134,20 @@ export const GOALKEEPER_CONSTRAINTS = {
  * Defined at module initialization to prevent repeated regex compilation during render or input validation.
  */
 export const PHONE_NUMBER_PATTERN = /^\+?[0-9\s()-]{10,18}$/;
+
+/**
+ * Supported match booking lifecycle statuses.
+ */
+export const BOOKING_STATUSES = ['confirmed', 'cancelled'] as const;
+
+/**
+ * Character length constraints for customer match booking requests.
+ */
+export const BOOKING_CONSTRAINTS = {
+  MIN_ORGANIZER_NAME_LENGTH: 3,
+  MAX_ORGANIZER_NAME_LENGTH: 60,
+  MIN_VENUE_NAME_LENGTH: 3,
+  MAX_VENUE_NAME_LENGTH: 80,
+  MIN_MATCH_TIME_LENGTH: 4,
+  MAX_MATCH_TIME_LENGTH: 30,
+} as const;

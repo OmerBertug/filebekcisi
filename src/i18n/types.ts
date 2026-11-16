@@ -105,8 +105,19 @@ export interface AppDictionary {
     readonly commissionLabel: string;
     readonly totalPayableLabel: string;
     readonly contactPhoneLabel: string;
+    readonly maskedPhoneNotice: string;
+    readonly organizerNameLabel: string;
+    readonly organizerNamePlaceholder: string;
+    readonly organizerPhoneLabel: string;
+    readonly organizerPhonePlaceholder: string;
+    readonly venueNameLabel: string;
+    readonly venueNamePlaceholder: string;
+    readonly matchDateLabel: string;
+    readonly matchTimeLabel: string;
+    readonly matchTimePlaceholder: string;
     readonly organizerNotice: string;
     readonly confirmRequestButton: string;
+    readonly submittingButton: string;
     readonly requestSentMessage: string;
   };
   readonly registration: {
@@ -181,6 +192,16 @@ export interface AppDictionary {
     readonly revokeButton: string;
     readonly deleteButton: string;
     readonly emptyDirectory: string;
+    readonly bookingsSectionTitle: string;
+    readonly bookingsSectionSubtitle: string;
+    readonly emptyBookings: string;
+    readonly bookingHeaderOrganizer: string;
+    readonly bookingHeaderKeeper: string;
+    readonly bookingHeaderSchedule: string;
+    readonly bookingHeaderFinancials: string;
+    readonly bookingCustomerPaysPrefix: string;
+    readonly bookingKeeperNetPrefix: string;
+    readonly bookingPlatformCutPrefix: string;
   };
   readonly footer: {
     readonly copyrightNotice: string;

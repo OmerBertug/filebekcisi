@@ -13,6 +13,11 @@ import {
   updateGoalkeeperVerification,
 } from '@/server/repositories/goalkeeperRepository';
 import {
+  createBooking,
+  deleteBookingById,
+  listBookings,
+} from '@/server/repositories/bookingRepository';
+import {
   createAdminSessionToken,
   verifyAdminPassword,
   verifyAdminSessionToken,
@@ -113,6 +118,34 @@ describe('admin goalkeeper moderation repository operations', () => {
 
     const missingVerify = await updateGoalkeeperVerification('non-existent', true, tempFile);
     expect(missingVerify).toEqual({ ok: false, error: API_ERROR_CODES.NOT_FOUND });
+
+    const bookingsFile = path.join(tempDir, 'bookings.json');
+    const bookingCreated = await createBooking(
+      {
+        goalkeeperId: created.data.id,
+        organizerName: 'Burak Yilmaz',
+        organizerPhone: '+90 532 444 55 66',
+        venueName: 'Moda Arena',
+        matchDate: 'friday',
+        matchTime: '21:00 - 22:00',
+      },
+      bookingsFile,
+      tempFile,
+    );
+    expect(bookingCreated.ok).toBe(true);
+    if (bookingCreated.ok) {
+      expect(bookingCreated.data.listedFeeTry).toBe(550);
+      expect(bookingCreated.data.goalkeeperNetPayoutTry).toBe(467);
+      expect(bookingCreated.data.customerCommissionTry).toBe(83);
+      expect(bookingCreated.data.totalPayableTry).toBe(633);
+      expect(bookingCreated.data.platformTotalRevenueTry).toBe(166);
+
+      const deletedBooking = await deleteBookingById(bookingCreated.data.id, bookingsFile);
+      expect(deletedBooking).toEqual({ ok: true, data: bookingCreated.data.id });
+    }
+
+    const emptyBookings = await listBookings(bookingsFile);
+    expect(emptyBookings).toEqual({ ok: true, data: [] });
 
     const deletedResult = await deleteGoalkeeperById(created.data.id, tempFile);
     expect(deletedResult).toEqual({ ok: true, data: created.data.id });

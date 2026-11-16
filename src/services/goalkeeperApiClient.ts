@@ -5,9 +5,13 @@ import { z } from 'zod';
 import {
   API_ERROR_CODES,
   VALIDATION_ERROR_CODES,
+  bookingRecordSchema,
   goalkeeperListSchema,
   goalkeeperProfileSchema,
   type ApiErrorCode,
+  type BookingFieldErrors,
+  type BookingRecord,
+  type CreateBookingInput,
   type CreateGoalkeeperInput,
   type GoalkeeperProfile,
   type RegistrationFieldErrors,
@@ -15,6 +19,7 @@ import {
 } from '@/domain/goalkeeper';
 
 const GOALKEEPERS_API_ENDPOINT = '/api/goalkeepers';
+const BOOKINGS_API_ENDPOINT = '/api/bookings';
 
 const apiErrorCodeSchema = z.enum([
   API_ERROR_CODES.INVALID_JSON,
@@ -39,6 +44,10 @@ const validationErrorCodeSchema = z.enum([
   VALIDATION_ERROR_CODES.INVALID_PHONE,
   VALIDATION_ERROR_CODES.EMPTY_DAYS,
   VALIDATION_ERROR_CODES.INVALID_BIO,
+  VALIDATION_ERROR_CODES.INVALID_ORGANIZER_NAME,
+  VALIDATION_ERROR_CODES.INVALID_VENUE_NAME,
+  VALIDATION_ERROR_CODES.INVALID_MATCH_DATE,
+  VALIDATION_ERROR_CODES.INVALID_MATCH_TIME,
 ]);
 
 const fieldErrorsSchema = z
@@ -56,6 +65,17 @@ const fieldErrorsSchema = z
   })
   .optional();
 
+const bookingFieldErrorsSchema = z
+  .object({
+    goalkeeperId: validationErrorCodeSchema.optional(),
+    organizerName: validationErrorCodeSchema.optional(),
+    organizerPhone: validationErrorCodeSchema.optional(),
+    venueName: validationErrorCodeSchema.optional(),
+    matchDate: validationErrorCodeSchema.optional(),
+    matchTime: validationErrorCodeSchema.optional(),
+  })
+  .optional();
+
 const getGoalkeepersResponseSchema = z.discriminatedUnion('ok', [
   z.object({ ok: z.literal(true), data: goalkeeperListSchema }),
   z.object({ ok: z.literal(false), errorCode: apiErrorCodeSchema }),
@@ -70,6 +90,15 @@ const postGoalkeeperResponseSchema = z.discriminatedUnion('ok', [
   }),
 ]);
 
+const postBookingResponseSchema = z.discriminatedUnion('ok', [
+  z.object({ ok: z.literal(true), data: bookingRecordSchema }),
+  z.object({
+    ok: z.literal(false),
+    errorCode: apiErrorCodeSchema,
+    fieldErrors: bookingFieldErrorsSchema,
+  }),
+]);
+
 /**
  * Structured error descriptor returned when goalkeeper registration fails over HTTP.
  */
@@ -79,10 +108,15 @@ export interface RegistrationApiFailure {
 }
 
 /**
+ * Structured error descriptor returned when customer booking checkout fails over HTTP.
+ */
+export interface BookingApiFailure {
+  readonly errorCode: ApiErrorCode;
+  readonly fieldErrors?: BookingFieldErrors;
+}
+
+/**
  * Fetches the list of goalkeeper profiles from `GET /api/goalkeepers` with runtime Zod validation.
- *
- * Propagates `AbortError` exceptions to callers when `signal` is aborted so unmounted React hooks
- * can exit cleanly without mutating component state.
  *
  * @param signal - Optional `AbortSignal` used to cancel in-flight HTTP requests on unmount.
  * @returns `Result` resolving to validated `GoalkeeperProfile[]` or an `ApiErrorCode`.
@@ -117,8 +151,6 @@ export async function fetchGoalkeepersList(
 /**
  * Submits a validated goalkeeper self-registration payload to `POST /api/goalkeepers`.
  *
- * Validates both success and error response shapes via Zod without unsafe type assertions.
- *
  * @param input - Sanitized `CreateGoalkeeperInput` registration attributes.
  * @returns `Result` containing either the persisted `GoalkeeperProfile` or `RegistrationApiFailure`.
  */
@@ -137,6 +169,47 @@ export async function submitGoalkeeperRegistration(
 
     const rawPayload: unknown = await response.json();
     const parsed = postGoalkeeperResponseSchema.safeParse(rawPayload);
+
+    if (!parsed.success) {
+      return { ok: false, error: { errorCode: API_ERROR_CODES.STORAGE_WRITE_FAILED } };
+    }
+    if (!parsed.data.ok) {
+      return {
+        ok: false,
+        error: {
+          errorCode: parsed.data.errorCode,
+          fieldErrors: parsed.data.fieldErrors,
+        },
+      };
+    }
+
+    return { ok: true, data: parsed.data.data };
+  } catch {
+    return { ok: false, error: { errorCode: API_ERROR_CODES.NETWORK_ERROR } };
+  }
+}
+
+/**
+ * Submits a customer match booking / purchase request to `POST /api/bookings`.
+ *
+ * @param input - Sanitized `CreateBookingInput` booking attributes.
+ * @returns `Result` containing either the created `BookingRecord` or `BookingApiFailure`.
+ */
+export async function submitMatchBooking(
+  input: CreateBookingInput,
+): Promise<Result<BookingRecord, BookingApiFailure>> {
+  try {
+    const response = await fetch(BOOKINGS_API_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify(input),
+    });
+
+    const rawPayload: unknown = await response.json();
+    const parsed = postBookingResponseSchema.safeParse(rawPayload);
 
     if (!parsed.success) {
       return { ok: false, error: { errorCode: API_ERROR_CODES.STORAGE_WRITE_FAILED } };

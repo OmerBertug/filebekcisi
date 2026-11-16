@@ -6,10 +6,11 @@
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, LogOut, Shield } from 'lucide-react';
+import { AdminBookingsTable } from '@/components/admin/AdminBookingsTable';
 import { AdminDashboardTable } from '@/components/admin/AdminDashboardTable';
 import { AdminLoginPanel } from '@/components/admin/AdminLoginPanel';
 import { SiteFooter } from '@/components/layout/SiteFooter';
-import type { ApiErrorCode, GoalkeeperProfile } from '@/domain/goalkeeper';
+import type { ApiErrorCode, BookingRecord, GoalkeeperProfile } from '@/domain/goalkeeper';
 import { useGoalkeepers } from '@/hooks/useGoalkeepers';
 import {
   DEFAULT_LOCALE,
@@ -19,9 +20,11 @@ import {
   type SupportedLocale,
 } from '@/i18n';
 import {
+  fetchAdminBookings,
   fetchAdminSession,
   loginAdmin,
   logoutAdmin,
+  removeBooking,
   removeGoalkeeper,
   setGoalkeeperVerification,
 } from '@/services/adminApiClient';
@@ -109,21 +112,25 @@ function AdminTopBar({
 
 interface AuthenticatedConsoleBodyProps {
   readonly goalkeepers: readonly GoalkeeperProfile[];
+  readonly bookings: readonly BookingRecord[];
   readonly dictionary: AppDictionary;
   readonly busyId: string | null;
   readonly onToggleVerified: (id: string, nextVerified: boolean) => Promise<void>;
   readonly onDeleteGoalkeeper: (id: string) => Promise<void>;
+  readonly onDeleteBooking: (id: string) => Promise<void>;
 }
 
 /**
- * Renders the 6-column header and goalkeeper moderation table once the administrator is signed in.
+ * Renders the 6-column header, goalkeeper moderation table, and incoming bookings table.
  */
 function AuthenticatedConsoleBody({
   goalkeepers,
+  bookings,
   dictionary,
   busyId,
   onToggleVerified,
   onDeleteGoalkeeper,
+  onDeleteBooking,
 }: AuthenticatedConsoleBodyProps): React.JSX.Element {
   return (
     <section className="border-b border-[#DCDCE2]">
@@ -149,6 +156,13 @@ function AuthenticatedConsoleBody({
           onToggleVerified={onToggleVerified}
           onDeleteGoalkeeper={onDeleteGoalkeeper}
         />
+
+        <AdminBookingsTable
+          bookings={bookings}
+          dictionary={dictionary}
+          busyBookingId={busyId}
+          onDeleteBooking={onDeleteBooking}
+        />
       </div>
     </section>
   );
@@ -156,7 +170,7 @@ function AuthenticatedConsoleBody({
 
 /**
  * Client workspace orchestrating administrator session verification, password login,
- * and goalkeeper verification/deletion inside `/admin`.
+ * goalkeeper moderation, and customer booking inspection inside `/admin`.
  *
  * @returns Rendered administrator console view.
  */
@@ -166,17 +180,27 @@ export function AdminWorkspace(): React.JSX.Element {
   const [isSubmittingAuth, setIsSubmittingAuth] = useState<boolean>(false);
   const [authErrorCode, setAuthErrorCode] = useState<ApiErrorCode | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [bookings, setBookings] = useState<readonly BookingRecord[]>([]);
 
   const { goalkeepers, reload } = useGoalkeepers();
   const dictionary = getDictionary(locale);
+
+  const loadBookings = useCallback(async (signal?: AbortSignal): Promise<void> => {
+    const result = await fetchAdminBookings(signal);
+    if (result.ok) {
+      setBookings(result.data);
+    }
+  }, []);
 
   useEffect(() => {
     const controller = new AbortController();
     fetchAdminSession(controller.signal)
       .then((result) => {
-        if (result.ok) {
-          setIsAuthenticated(result.data.authenticated);
+        if (result.ok && result.data.authenticated) {
+          setIsAuthenticated(true);
+          return loadBookings(controller.signal);
         }
+        return undefined;
       })
       .catch(() => {
         // Ignore AbortError on unmount.
@@ -184,19 +208,25 @@ export function AdminWorkspace(): React.JSX.Element {
     return () => {
       controller.abort();
     };
-  }, []);
+  }, [loadBookings]);
 
-  const handleLogin = useCallback(async (password: string): Promise<void> => {
-    setIsSubmittingAuth(true);
-    setAuthErrorCode(null);
-    const result = await loginAdmin(password);
-    setIsSubmittingAuth(false);
-    if (!result.ok) {
-      setAuthErrorCode(result.error);
-      return;
-    }
-    setIsAuthenticated(result.data.authenticated);
-  }, []);
+  const handleLogin = useCallback(
+    async (password: string): Promise<void> => {
+      setIsSubmittingAuth(true);
+      setAuthErrorCode(null);
+      const result = await loginAdmin(password);
+      setIsSubmittingAuth(false);
+      if (!result.ok) {
+        setAuthErrorCode(result.error);
+        return;
+      }
+      setIsAuthenticated(result.data.authenticated);
+      if (result.data.authenticated) {
+        await loadBookings();
+      }
+    },
+    [loadBookings],
+  );
 
   const handleLogout = useCallback(async (): Promise<void> => {
     await logoutAdmin();
@@ -227,6 +257,18 @@ export function AdminWorkspace(): React.JSX.Element {
     [reload],
   );
 
+  const handleDeleteBooking = useCallback(
+    async (id: string): Promise<void> => {
+      setBusyId(id);
+      const result = await removeBooking(id);
+      setBusyId(null);
+      if (result.ok) {
+        await loadBookings();
+      }
+    },
+    [loadBookings],
+  );
+
   return (
     <div className="flex min-h-screen flex-col bg-[#F8F8FA] text-[#4C4C4C]">
       <AdminTopBar
@@ -247,10 +289,12 @@ export function AdminWorkspace(): React.JSX.Element {
         ) : (
           <AuthenticatedConsoleBody
             goalkeepers={goalkeepers}
+            bookings={bookings}
             dictionary={dictionary}
             busyId={busyId}
             onToggleVerified={handleToggleVerified}
             onDeleteGoalkeeper={handleDeleteGoalkeeper}
+            onDeleteBooking={handleDeleteBooking}
           />
         )}
       </main>
