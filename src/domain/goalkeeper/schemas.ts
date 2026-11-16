@@ -119,6 +119,20 @@ export const goalkeeperProfileSchema = createGoalkeeperSchema.extend({
 export const goalkeeperListSchema = z.array(goalkeeperProfileSchema);
 
 /**
+ * Runtime Zod schema validating administrator login credentials submitted to `/api/admin/session`.
+ */
+export const adminLoginSchema = z.object({
+  password: z.string().min(1).max(256),
+});
+
+/**
+ * Runtime Zod schema validating goalkeeper verification toggle requests submitted to `/api/admin/goalkeepers/[id]`.
+ */
+export const adminUpdateVerificationSchema = z.object({
+  isVerified: z.boolean(),
+});
+
+/**
  * Validates an untrusted goalkeeper registration input object and extracts typed field errors
  * on failure without throwing exceptions.
  *

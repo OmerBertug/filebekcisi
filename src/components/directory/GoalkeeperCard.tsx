@@ -129,7 +129,7 @@ export const GoalkeeperCard = memo(function GoalkeeperCard({
           <p className="text-[11px] font-light tracking-wider text-[#636262] uppercase">
             {dictionary.card.goalkeeperFeeLabel}
           </p>
-          <p className="mt-0.5 text-xl font-light text-[#161540]">
+          <p className="font-heading mt-0.5 text-xl font-light text-[#161540]">
             {fee.goalkeeperFeeTry} {currency}
           </p>
           <p className="text-[11px] font-light text-[#636262]">

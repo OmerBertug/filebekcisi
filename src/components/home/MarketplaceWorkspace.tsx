@@ -90,7 +90,7 @@ export function MarketplaceWorkspace(): React.JSX.Element {
             </div>
 
             <div className="px-4 py-8 sm:px-10 lg:col-span-5">
-              <p className="text-xl font-light text-[#4C4C4C] sm:text-2xl">
+              <p className="font-heading text-xl font-light text-[#4C4C4C] sm:text-2xl">
                 {dictionary.filters.sectionSubtitle}
               </p>
             </div>

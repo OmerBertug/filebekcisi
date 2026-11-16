@@ -14,6 +14,9 @@
 - [x] Installed 22 agent skills from `nextlevelbuilder/ui-ux-pro-max-skill` and `obra/superpowers` into `.agents/skills/`.
 - [x] Installed `graphify` skill from `Graphify-Labs/graphify` into `.agents/skills/graphify/SKILL.md` and generated `graphify-out/` codebase knowledge graph for `src/`.
 - [x] Redesigned UI components and formal Turkish/English copy into a corporate architectural 6-column hairline grid layout (`FEAT-007`).
+- [x] Integrated self-hosted `Plus Jakarta Sans` (headings) and `Inter` (body) variable `.woff2` fonts via `next/font/local` (`FEAT-008`).
+- [x] Built restricted `/admin` moderation console with `HttpOnly` HMAC-SHA256 session authentication, verification toggling, and profile deletion (`FEAT-009`).
+- [x] Added HTTP security headers (`next.config.ts`), API rate-limiting and payload size guards, custom 404 (`not-found.tsx`), runtime error boundary (`error.tsx`), and `robots.ts` (`FEAT-010`).
 
 ## Pending / Future Roadmap
 

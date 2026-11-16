@@ -141,3 +141,76 @@ export async function registerGoalkeeper(
 
   return { ok: true, data: newProfile };
 }
+
+/**
+ * Updates the `isVerified` status of a persisted goalkeeper profile identified by `id`.
+ *
+ * @param id - Target goalkeeper profile identifier.
+ * @param isVerified - New verification flag set by an administrator.
+ * @param customFilePath - Optional file path override for isolated test suites.
+ * @returns `Result` containing the updated `GoalkeeperProfile` or `NOT_FOUND` / storage error.
+ */
+export async function updateGoalkeeperVerification(
+  id: string,
+  isVerified: boolean,
+  customFilePath?: string,
+): Promise<Result<GoalkeeperProfile, ApiErrorCode>> {
+  const filePath = resolveGoalkeepersDataPath(customFilePath);
+  const existingResult = await listGoalkeepers(filePath);
+
+  if (!existingResult.ok) {
+    return existingResult;
+  }
+
+  const targetIndex = existingResult.data.findIndex((item) => item.id === id);
+  const existingProfile = existingResult.data[targetIndex];
+  if (targetIndex === -1 || existingProfile === undefined) {
+    return { ok: false, error: API_ERROR_CODES.NOT_FOUND };
+  }
+
+  const updatedProfile: GoalkeeperProfile = {
+    ...existingProfile,
+    isVerified,
+  };
+  const updatedList = existingResult.data.map((item, idx) =>
+    idx === targetIndex ? updatedProfile : item,
+  );
+
+  const writeResult = await writeGoalkeepersAtomically(updatedList, filePath);
+  if (!writeResult.ok) {
+    return writeResult;
+  }
+
+  return { ok: true, data: updatedProfile };
+}
+
+/**
+ * Deletes a persisted goalkeeper profile identified by `id` from JSON storage.
+ *
+ * @param id - Target goalkeeper profile identifier to remove.
+ * @param customFilePath - Optional file path override for isolated test suites.
+ * @returns `Result` containing the deleted profile `id` or `NOT_FOUND` / storage error.
+ */
+export async function deleteGoalkeeperById(
+  id: string,
+  customFilePath?: string,
+): Promise<Result<string, ApiErrorCode>> {
+  const filePath = resolveGoalkeepersDataPath(customFilePath);
+  const existingResult = await listGoalkeepers(filePath);
+
+  if (!existingResult.ok) {
+    return existingResult;
+  }
+
+  const remaining = existingResult.data.filter((item) => item.id !== id);
+  if (remaining.length === existingResult.data.length) {
+    return { ok: false, error: API_ERROR_CODES.NOT_FOUND };
+  }
+
+  const writeResult = await writeGoalkeepersAtomically(remaining, filePath);
+  if (!writeResult.ok) {
+    return writeResult;
+  }
+
+  return { ok: true, data: id };
+}

@@ -3,6 +3,11 @@
 
 @import 'tailwindcss';
 
+@theme inline {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-plus-jakarta), ui-sans-serif, system-ui, sans-serif;
+}
+
 :root {
   --surface-primary: #f8f8fa;
   --surface-secondary: #e8e8ec;
@@ -17,4 +22,18 @@ html {
   scroll-behavior: smooth;
   background-color: var(--surface-primary);
   color: var(--ink-body);
+  font-family: var(--font-sans);
+}
+
+body {
+  font-family: var(--font-sans);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
 }

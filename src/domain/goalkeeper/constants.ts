@@ -82,6 +82,25 @@ export const API_ERROR_CODES = {
   STORAGE_READ_FAILED: 'storage_read_failed',
   STORAGE_WRITE_FAILED: 'storage_write_failed',
   NETWORK_ERROR: 'network_error',
+  UNAUTHORIZED: 'unauthorized',
+  NOT_FOUND: 'not_found',
+  RATE_LIMITED: 'rate_limited',
+  PAYLOAD_TOO_LARGE: 'payload_too_large',
+} as const;
+
+/**
+ * HTTP cookie identifier storing the HMAC-signed administrator session token.
+ */
+export const ADMIN_SESSION_COOKIE_NAME = 'fb_admin_session' as const;
+
+/**
+ * Security boundary constants governing payload size, sliding-window rate limits, and session TTL.
+ */
+export const SECURITY_LIMITS = {
+  MAX_PAYLOAD_BYTES: 16384,
+  RATE_LIMIT_WINDOW_MS: 60000,
+  MAX_REQUESTS_PER_WINDOW: 15,
+  SESSION_TTL_SECONDS: 28800,
 } as const;
 
 /**

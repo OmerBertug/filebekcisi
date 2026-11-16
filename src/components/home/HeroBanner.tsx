@@ -34,13 +34,15 @@ function HeroMetricBar({ dictionary, registeredCount }: HeroMetricBarProps): Rea
           <dt className="text-[11px] font-light tracking-[0.14em] text-white/65 uppercase">
             {dictionary.hero.statsActiveKeepers}
           </dt>
-          <dd className="mt-2 text-3xl font-light tracking-tight text-white">{registeredCount}</dd>
+          <dd className="font-heading mt-2 text-3xl font-light tracking-tight text-white">
+            {registeredCount}
+          </dd>
         </div>
         <div className="px-4 py-6 sm:px-10">
           <dt className="text-[11px] font-light tracking-[0.14em] text-white/65 uppercase">
             {dictionary.hero.statsCommissionRate}
           </dt>
-          <dd className="mt-2 text-3xl font-light tracking-tight text-white">
+          <dd className="font-heading mt-2 text-3xl font-light tracking-tight text-white">
             {dictionary.hero.commissionPercentValue}
           </dd>
         </div>
@@ -48,7 +50,7 @@ function HeroMetricBar({ dictionary, registeredCount }: HeroMetricBarProps): Rea
           <dt className="text-[11px] font-light tracking-[0.14em] text-white/65 uppercase">
             {dictionary.hero.statsSafeEscrow}
           </dt>
-          <dd className="mt-2 text-3xl font-light tracking-tight text-white">
+          <dd className="font-heading mt-2 text-3xl font-light tracking-tight text-white">
             {dictionary.hero.safeEscrowValue}
           </dd>
         </div>

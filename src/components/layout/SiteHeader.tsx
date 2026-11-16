@@ -91,7 +91,7 @@ export function SiteHeader({
               <Shield className="h-4 w-4" aria-hidden="true" />
             </span>
             <span className="flex flex-col">
-              <span className="text-sm font-normal tracking-[0.14em] text-[#161540] uppercase">
+              <span className="font-heading text-sm font-medium tracking-[0.14em] text-[#161540] uppercase">
                 {dictionary.meta.brandName}
               </span>
               <span className="hidden text-[11px] font-light tracking-wider text-[#636262] sm:inline">

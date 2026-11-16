@@ -9,6 +9,11 @@ import {
   type GoalkeeperProfile,
 } from '@/domain/goalkeeper';
 import { listGoalkeepers, registerGoalkeeper } from '@/server/repositories/goalkeeperRepository';
+import {
+  checkRateLimit,
+  extractClientIp,
+  isPayloadWithinLimit,
+} from '@/server/security/rateLimiter';
 
 /**
  * Handles `GET /api/goalkeepers` requests to retrieve all registered goalkeeper profiles.
@@ -32,16 +37,30 @@ export async function GET(): Promise<NextResponse<GoalkeeperApiResponse<Goalkeep
 /**
  * Handles `POST /api/goalkeepers` requests for goalkeeper self-registration.
  *
- * Safely parses the incoming JSON body, validates fields against `createGoalkeeperSchema`,
- * persists the new goalkeeper profile, and returns HTTP 201 with the created entity.
- * Malformed JSON or invalid field values return HTTP 400 with structured error codes.
+ * Enforces payload byte limits and sliding-window rate limits per client IP before parsing
+ * the JSON body, validating fields against `createGoalkeeperSchema`, and persisting the profile.
  *
  * @param request - Incoming HTTP `Request` containing goalkeeper registration JSON.
- * @returns `NextResponse` containing either the created `GoalkeeperProfile` or validation errors.
+ * @returns `NextResponse` containing either the created `GoalkeeperProfile` or structured errors.
  */
 export async function POST(
   request: Request,
 ): Promise<NextResponse<GoalkeeperApiResponse<GoalkeeperProfile>>> {
+  if (!isPayloadWithinLimit(request)) {
+    return NextResponse.json(
+      { ok: false, errorCode: API_ERROR_CODES.PAYLOAD_TOO_LARGE },
+      { status: 413 },
+    );
+  }
+
+  const clientKey = `register:${extractClientIp(request)}`;
+  if (!checkRateLimit(clientKey)) {
+    return NextResponse.json(
+      { ok: false, errorCode: API_ERROR_CODES.RATE_LIMITED },
+      { status: 429 },
+    );
+  }
+
   let rawBody: unknown;
   try {
     rawBody = await request.json();

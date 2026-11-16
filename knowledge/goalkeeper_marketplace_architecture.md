@@ -24,5 +24,10 @@
   - `useGoalkeepers` manages directory loading with `AbortController` cleanup on unmount.
   - `useGoalkeeperRegistrationForm` coordinates controlled form inputs, client-side Zod validation, and API submission.
   - `MarketplaceWorkspace` computes filtered results via `useMemo` and passes stable callbacks via `useCallback` to memoized `GoalkeeperCard` components.
-- **Architectural Design System (`src/app/globals.css` & `src/components/`)**:
-  - Uses a 6-column structural hairline grid (`lg:grid-cols-6`) anchored by `1px` `#DCDCE2` dividers, deep institutional navy (`#161540`), crisp neutral surfaces (`#F8F8FA`, `#E8E8EC`, `#FFFFFF`), and `0px` rectangular controls (`rounded-none`) with `font-light` editorial headings.
+- **Architectural Design System (`src/app/globals.css`, `src/app/layout.tsx` & `src/components/`)**:
+  - Uses a 6-column structural hairline grid (`lg:grid-cols-6`) anchored by `1px` `#DCDCE2` dividers, deep institutional navy (`#161540`), crisp neutral surfaces (`#F8F8FA`, `#E8E8EC`, `#FFFFFF`), and `0px` rectangular controls (`rounded-none`).
+  - Typography is powered by self-hosted `Plus Jakarta Sans` (`--font-plus-jakarta`, Latin + Latin-Extended variable `.woff2`) for headings/display titles and `Inter` (`--font-inter`, Latin + Latin-Extended variable `.woff2`) for body copy and form inputs.
+- **Security & Private Administration (`src/server/security/`, `src/app/api/admin/`, `src/app/admin/`)**:
+  - `adminAuth.ts` verifies `ADMIN_PASSWORD` using constant-time SHA-256 digests (`timingSafeEqual`) and issues HMAC-SHA256 signed `HttpOnly` session cookies (`fb_admin_session`).
+  - `rateLimiter.ts` enforces sliding-window IP rate limiting (`15 req / 60s`) and request payload byte ceilings (`16 KB`) across registration and login endpoints.
+  - `/admin` is unlinked from public navigation, blocked in `/robots.txt` and `X-Robots-Tag: noindex, nofollow`, and allows authorized administrators to toggle `isVerified` status or delete profiles.

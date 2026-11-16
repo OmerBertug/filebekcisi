@@ -140,6 +140,48 @@ export interface AppDictionary {
   readonly daysShort: Readonly<Record<AvailableDay, string>>;
   readonly validation: Readonly<Record<ValidationErrorCode, string>>;
   readonly apiErrors: Readonly<Record<ApiErrorCode, string>>;
+  readonly notFoundPage: {
+    readonly codeLabel: string;
+    readonly title: string;
+    readonly description: string;
+    readonly returnHomeCta: string;
+  };
+  readonly errorPage: {
+    readonly codeLabel: string;
+    readonly title: string;
+    readonly description: string;
+    readonly retryCta: string;
+    readonly returnHomeCta: string;
+  };
+  readonly admin: {
+    readonly badge: string;
+    readonly title: string;
+    readonly subtitle: string;
+    readonly backToSite: string;
+    readonly logoutButton: string;
+    readonly loginTitle: string;
+    readonly loginSubtitle: string;
+    readonly passwordLabel: string;
+    readonly passwordPlaceholder: string;
+    readonly loginButton: string;
+    readonly loggingInButton: string;
+    readonly invalidCredentials: string;
+    readonly totalKeepersLabel: string;
+    readonly verifiedKeepersLabel: string;
+    readonly pendingKeepersLabel: string;
+    readonly tableHeaderKeeper: string;
+    readonly tableHeaderDistrict: string;
+    readonly tableHeaderFee: string;
+    readonly tableHeaderPhone: string;
+    readonly tableHeaderStatus: string;
+    readonly tableHeaderActions: string;
+    readonly statusVerified: string;
+    readonly statusPending: string;
+    readonly approveButton: string;
+    readonly revokeButton: string;
+    readonly deleteButton: string;
+    readonly emptyDirectory: string;
+  };
   readonly footer: {
     readonly copyrightNotice: string;
     readonly brokerageDisclaimer: string;

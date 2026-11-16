@@ -45,7 +45,7 @@ function RegistrationSectionHeader({
       </div>
 
       <div className="px-4 py-8 sm:px-10 lg:col-span-5">
-        <p className="text-2xl font-light text-[#161540] sm:text-3xl">
+        <p className="font-heading text-2xl font-light text-[#161540] sm:text-3xl">
           {dictionary.registration.sectionTitle}
         </p>
         <p className="mt-2 max-w-3xl text-sm font-light text-[#636262] sm:text-base">

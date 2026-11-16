@@ -2,11 +2,12 @@
 
 ## Current Focus
 
-Completed the corporate architectural 6-column hairline grid redesign across all UI components and formal localization catalogs for **FileBekcisi**, preparing the repository for GitHub publishing.
+Completed corporate architectural redesign, `Plus Jakarta Sans` + `Inter` variable typography, HTTP security hardening, custom 404/error/robots routes, and the restricted `/admin` moderation console (`HttpOnly` HMAC-SHA256 session authentication).
 
 ## Active Architecture Decisions
 
-- **Design System**: Standardized on an institutional 6-column hairline grid (`lg:grid-cols-6`), `1px` `#DCDCE2` structural dividers, `#161540` navy accents, `#F8F8FA`/`#FFFFFF` neutral surfaces, `#4C4C4C`/`#636262` body typography, and `rounded-none` sharp rectangular controls.
+- **Design System**: Standardized on an institutional 6-column hairline grid (`lg:grid-cols-6`), `1px` `#DCDCE2` structural dividers, `#161540` navy accents, `#F8F8FA`/`#FFFFFF` neutral surfaces, `#4C4C4C`/`#636262` body typography, `rounded-none` sharp rectangular controls, and self-hosted `Plus Jakarta Sans` (headings) + `Inter` (body) variable fonts.
+- **Security & Admin Moderation**: `/admin` is unlinked from public UI, excluded from crawlers (`robots.ts` + `X-Robots-Tag`), and gated by constant-time `ADMIN_PASSWORD` verification (`timingSafeEqual`) issuing an `HttpOnly`, `SameSite=Strict` HMAC-signed cookie (`fb_admin_session`). Public and admin mutations are protected by sliding-window rate limiting and payload byte caps.
 - **Codebase Graph Analysis**: Generated architectural dependency and community cluster reports under `graphify-out/` (151 nodes, 448 edges, 7 communities) for `src/`.
 
 - **Automatic Rule Loading**: Root `AGENTS.md` includes `@[AI_GUIDELINES.md](AI_GUIDELINES.md)` so Antigravity automatically loads and enforces `AI_GUIDELINES.md` on every session and turn without manual user prompting.

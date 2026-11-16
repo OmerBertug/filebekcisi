@@ -27,7 +27,7 @@ export function SiteFooter({ dictionary }: SiteFooterProps): React.JSX.Element {
           <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-none border border-white/25 bg-white/10 text-white">
             <Shield className="h-4 w-4" aria-hidden="true" />
           </span>
-          <p className="text-xs font-normal tracking-[0.14em] text-white uppercase">
+          <p className="font-heading text-xs font-medium tracking-[0.14em] text-white uppercase">
             {dictionary.meta.brandName}
           </p>
         </div>

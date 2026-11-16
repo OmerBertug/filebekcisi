@@ -1,6 +1,5 @@
 [
   {
-    "id": "gk-526e4003-bd0c-46d2-932d-fbf70bc2e9d7",
     "fullName": "Ömer Bertuğ Tezel",
     "district": "istanbul_kadikoy",
     "age": 24,
@@ -14,9 +13,10 @@
       "saturday"
     ],
     "bio": "Agresif oynarım böyle kaleden kaleye vururum",
+    "id": "gk-526e4003-bd0c-46d2-932d-fbf70bc2e9d7",
     "rating": 5,
     "completedMatches": 0,
-    "isVerified": false,
+    "isVerified": true,
     "createdAt": "2026-11-07T11:31:49.098Z"
   },
   {

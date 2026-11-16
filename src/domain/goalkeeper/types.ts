@@ -139,7 +139,7 @@ export type RegistrationFieldErrors = Partial<
 >;
 
 /**
- * Discriminated JSON envelope returned by `/api/goalkeepers` endpoints.
+ * Discriminated JSON envelope returned by `/api/goalkeepers` and `/api/admin/*` endpoints.
  *
  * @template TPayload - Expected payload type when `ok` is `true`.
  */
@@ -150,3 +150,10 @@ export type GoalkeeperApiResponse<TPayload> =
       readonly errorCode: ApiErrorCode;
       readonly fieldErrors?: RegistrationFieldErrors;
     };
+
+/**
+ * Payload returned by `GET /api/admin/session` indicating current administrator authentication status.
+ */
+export interface AdminSessionStatus {
+  readonly authenticated: boolean;
+}
