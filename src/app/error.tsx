@@ -20,48 +20,41 @@ export interface ErrorBoundaryProps {
 }
 
 /**
- * Client-side route error boundary rendered on unexpected runtime exceptions, styled on the
- * 6-column architectural hairline grid with recovery actions.
+ * Client-side route error boundary rendered on unexpected runtime exceptions under Electric Pitch
+ * dark styling with recovery actions.
  *
  * @param props - `ErrorBoundaryProps` providing the caught error and segment reset callback.
  * @returns Rendered error recovery `<main>` view.
  */
 export default function GlobalErrorPage({ reset }: ErrorBoundaryProps): React.JSX.Element {
   return (
-    <main className="flex min-h-screen flex-col justify-center bg-[#F8F8FA] text-[#4C4C4C]">
-      <section className="border-y border-[#DCDCE2] bg-white">
-        <div className="mx-auto grid max-w-[1440px] grid-cols-1 lg:grid-cols-6">
-          <div className="border-b border-[#DCDCE2] bg-[#161540] px-4 py-10 text-white sm:px-8 lg:col-span-1 lg:border-r lg:border-b-0 lg:py-16">
-            <span className="block text-[11px] font-light tracking-[0.18em] text-white/65 uppercase">
-              {dictionary.errorPage.codeLabel}
-            </span>
-          </div>
-
-          <div className="px-4 py-12 sm:px-10 lg:col-span-5 lg:py-16">
-            <h1 className="max-w-2xl text-2xl font-light tracking-tight text-[#161540] sm:text-4xl">
-              {dictionary.errorPage.title}
-            </h1>
-            <p className="mt-4 max-w-xl text-sm font-light leading-relaxed text-[#636262] sm:text-base">
-              {dictionary.errorPage.description}
-            </p>
-            <div className="mt-8 flex flex-wrap items-center gap-4">
-              <button
-                type="button"
-                onClick={reset}
-                className="inline-flex items-center gap-2 rounded-none border border-[#161540] bg-[#161540] px-6 py-3.5 text-xs font-normal tracking-[0.12em] text-white uppercase transition hover:bg-white hover:text-[#161540]"
-              >
-                <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
-                <span>{dictionary.errorPage.retryCta}</span>
-              </button>
-              <Link
-                href="/"
-                className="inline-flex items-center gap-2 rounded-none border border-[#DCDCE2] bg-[#F8F8FA] px-6 py-3.5 text-xs font-normal tracking-[0.12em] text-[#161540] uppercase transition hover:border-[#161540] hover:bg-white"
-              >
-                <span>{dictionary.errorPage.returnHomeCta}</span>
-                <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
-              </Link>
-            </div>
-          </div>
+    <main className="pitch-grid-bg flex min-h-screen flex-col justify-center bg-[#0B0F12] px-4 py-16 text-[#E0E3E7] sm:px-8">
+      <section className="mx-auto w-full max-w-2xl rounded-xl border border-white/[0.08] bg-[#12181F]/90 p-8 backdrop-blur-md sm:p-12">
+        <span className="font-heading text-xs font-bold tracking-[0.14em] text-[#FFB4AB] uppercase">
+          {dictionary.errorPage.codeLabel}
+        </span>
+        <h1 className="mt-4 font-heading text-2xl font-bold text-[#F8FAFC] sm:text-3xl">
+          {dictionary.errorPage.title}
+        </h1>
+        <p className="mt-3 text-sm leading-relaxed text-[#94A3B8] sm:text-base">
+          {dictionary.errorPage.description}
+        </p>
+        <div className="mt-8 flex flex-wrap items-center gap-4">
+          <button
+            type="button"
+            onClick={reset}
+            className="inline-flex items-center gap-2 rounded-md bg-[#14E777] px-6 py-3.5 font-heading text-xs font-bold tracking-wider text-[#0B0F12] uppercase transition hover:bg-[#62FF95]"
+          >
+            <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
+            <span>{dictionary.errorPage.retryCta}</span>
+          </button>
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 rounded-md border border-white/25 bg-transparent px-6 py-3.5 font-heading text-xs font-semibold tracking-wider text-[#F8FAFC] uppercase transition hover:border-[#14E777]/50 hover:bg-white/[0.06]"
+          >
+            <span>{dictionary.errorPage.returnHomeCta}</span>
+            <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+          </Link>
         </div>
       </section>
     </main>

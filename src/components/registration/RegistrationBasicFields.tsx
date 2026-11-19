@@ -13,6 +13,10 @@ import {
 } from '@/domain/goalkeeper';
 import type { AppDictionary } from '@/i18n';
 
+const INPUT_CLASS =
+  'mt-1.5 w-full rounded-md border border-white/[0.12] bg-[#0B0F12] px-3.5 py-2.5 text-sm text-[#F8FAFC] placeholder:text-[#64748B] transition duration-150 focus:border-[#14E777] focus:ring-1 focus:ring-[#14E777] focus:outline-none';
+const LABEL_CLASS = 'block font-heading text-xs font-semibold tracking-wide text-[#E0E3E7]';
+
 interface LabeledInputFieldProps {
   readonly id: string;
   readonly label: string;
@@ -27,8 +31,7 @@ interface LabeledInputFieldProps {
 }
 
 /**
- * Accessible architectural single-line input control binding uppercase label, error alert,
- * and ARIA invalid state attributes.
+ * Accessible dark-mode single-line input control binding label, error alert, and ARIA attributes.
  *
  * @param props - `LabeledInputFieldProps` configuring field validation and change listener.
  * @returns Rendered labeled `<input>` group.
@@ -48,10 +51,7 @@ function LabeledInputField({
   const errorId = `${id}-error`;
   return (
     <div>
-      <label
-        htmlFor={id}
-        className="block text-[11px] font-normal tracking-[0.08em] text-[#4C4C4C] uppercase"
-      >
+      <label htmlFor={id} className={LABEL_CLASS}>
         {label}
       </label>
       <input
@@ -64,10 +64,10 @@ function LabeledInputField({
         aria-invalid={errorCode !== undefined}
         aria-describedby={errorCode !== undefined ? errorId : undefined}
         onChange={(event) => onChange(event.target.value)}
-        className="mt-2 w-full rounded-none border border-[#DCDCE2] bg-[#F8F8FA] px-3.5 py-2.5 text-sm font-light text-[#161540] transition placeholder:text-[#828282] focus:border-[#161540] focus:bg-white focus:outline-none"
+        className={INPUT_CLASS}
       />
       {errorCode !== undefined && (
-        <p id={errorId} role="alert" className="mt-1.5 text-xs font-normal text-red-700">
+        <p id={errorId} role="alert" className="mt-1.5 text-xs font-medium text-[#FFB4AB]">
           {dictionary.validation[errorCode]}
         </p>
       )}
@@ -130,10 +130,7 @@ export function RegistrationBasicFields({
       />
 
       <div>
-        <label
-          htmlFor="reg-district"
-          className="block text-[11px] font-normal tracking-[0.08em] text-[#4C4C4C] uppercase"
-        >
+        <label htmlFor="reg-district" className={LABEL_CLASS}>
           {dictionary.registration.districtLabel}
         </label>
         <select
@@ -144,7 +141,7 @@ export function RegistrationBasicFields({
               onUpdateField('district', e.target.value);
             }
           }}
-          className="mt-2 w-full rounded-none border border-[#DCDCE2] bg-[#F8F8FA] px-3.5 py-2.5 text-sm font-light text-[#161540] transition focus:border-[#161540] focus:bg-white focus:outline-none"
+          className={INPUT_CLASS}
         >
           {DISTRICT_CODES.map((code) => (
             <option key={code} value={code}>

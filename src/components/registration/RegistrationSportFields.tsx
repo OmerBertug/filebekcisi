@@ -18,8 +18,8 @@ import {
 import type { AppDictionary } from '@/i18n';
 
 const INPUT_CLASS =
-  'mt-2 w-full rounded-none border border-[#DCDCE2] bg-[#F8F8FA] px-3.5 py-2.5 text-sm font-light text-[#161540] transition placeholder:text-[#828282] focus:border-[#161540] focus:bg-white focus:outline-none';
-const LABEL_CLASS = 'block text-[11px] font-normal tracking-[0.08em] text-[#4C4C4C] uppercase';
+  'mt-1.5 w-full rounded-md border border-white/[0.12] bg-[#0B0F12] px-3.5 py-2.5 text-sm text-[#F8FAFC] placeholder:text-[#64748B] transition duration-150 focus:border-[#14E777] focus:ring-1 focus:ring-[#14E777] focus:outline-none';
+const LABEL_CLASS = 'block font-heading text-xs font-semibold tracking-wide text-[#E0E3E7]';
 
 interface SelectOptionItem {
   readonly value: string;
@@ -35,7 +35,7 @@ interface AthleticSelectControlProps {
 }
 
 /**
- * Shared architectural select field used across athletic qualification attributes.
+ * Shared dark-mode select control across athletic qualification attributes.
  */
 function AthleticSelectControl({
   id,
@@ -73,10 +73,7 @@ interface WeekdayPickerProps {
 }
 
 /**
- * Multi-select architectural button grid allowing goalkeepers to toggle available weekdays.
- *
- * @param props - `WeekdayPickerProps` holding selected day codes and validation error text.
- * @returns Accessible weekday toggle button group.
+ * Capsule pill weekday selector allowing goalkeepers to toggle available matchdays.
  */
 function WeekdayPicker({
   selectedDays,
@@ -87,9 +84,7 @@ function WeekdayPicker({
   return (
     <div>
       <p className={LABEL_CLASS}>{dictionary.registration.availableDaysLabel}</p>
-      <p className="mt-1 text-xs font-light text-[#636262]">
-        {dictionary.registration.availableDaysHint}
-      </p>
+      <p className="mt-1 text-xs text-[#94A3B8]">{dictionary.registration.availableDaysHint}</p>
       <div className="mt-3 flex flex-wrap gap-2">
         {AVAILABLE_DAYS.map((day) => {
           const isSelected = selectedDays.includes(day);
@@ -99,10 +94,10 @@ function WeekdayPicker({
               type="button"
               aria-pressed={isSelected}
               onClick={() => onToggleDay(day)}
-              className={`rounded-none border px-3.5 py-2 text-[11px] font-normal tracking-wider uppercase transition ${
+              className={`rounded-full border px-3.5 py-1.5 font-heading text-xs font-medium tracking-wide transition duration-150 ${
                 isSelected
-                  ? 'border-[#161540] bg-[#161540] text-white'
-                  : 'border-[#DCDCE2] bg-white text-[#4C4C4C] hover:border-[#161540] hover:text-[#161540]'
+                  ? 'border-[#14E777] bg-[#14E777]/[0.12] text-[#14E777]'
+                  : 'border-white/[0.12] bg-[#1A232C] text-[#94A3B8] hover:border-white/30 hover:text-[#F8FAFC]'
               }`}
             >
               {dictionary.days[day]}
@@ -111,7 +106,7 @@ function WeekdayPicker({
         })}
       </div>
       {errorText !== null && (
-        <p role="alert" className="mt-1.5 text-xs font-normal text-red-700">
+        <p role="alert" className="mt-1.5 text-xs font-medium text-[#FFB4AB]">
           {errorText}
         </p>
       )}
@@ -139,7 +134,7 @@ export interface RegistrationSportFieldsProps {
 }
 
 /**
- * Three-column athletic qualification row covering experience tier, dominant hand, and net fee.
+ * Three-column athletic qualification row covering experience tier, dominant hand, and listed fee.
  */
 function AthleticAttributesRow({
   draft,
@@ -196,7 +191,7 @@ function AthleticAttributesRow({
           className={INPUT_CLASS}
         />
         {fieldErrors.matchFeeTry !== undefined && (
-          <p role="alert" className="mt-1.5 text-xs font-normal text-red-700">
+          <p role="alert" className="mt-1.5 text-xs font-medium text-[#FFB4AB]">
             {dictionary.validation[fieldErrors.matchFeeTry]}
           </p>
         )}
@@ -206,8 +201,8 @@ function AthleticAttributesRow({
 }
 
 /**
- * Renders athletic attributes, match fee with real-time brokerage commission preview,
- * available weekday toggles, and goalkeeper bio input.
+ * Renders athletic attributes, glowing Electric Pitch dynamic net-payout calculation card,
+ * capsule weekday toggles, and goalkeeper bio input.
  *
  * @param props - `RegistrationSportFieldsProps` binding athletic fields and callbacks.
  * @returns Athletic attributes form section.
@@ -227,19 +222,23 @@ export function RegistrationSportFields(props: RegistrationSportFieldsProps): Re
         onUpdateField={onUpdateField}
       />
 
-      <div className="flex flex-wrap items-center justify-between gap-2 rounded-none border border-[#DCDCE2] bg-[#F8F8FA] px-4 py-3 text-xs font-light text-[#161540]">
-        <span>
-          {dictionary.registration.feePreviewGoalkeeperGets}{' '}
-          <strong className="font-normal">
-            {feePreview.goalkeeperNetPayoutTry} {currency}
-          </strong>
-        </span>
-        <span>
-          {dictionary.registration.feePreviewOrganizerPays}{' '}
-          <strong className="font-normal">
+      <div className="grid grid-cols-1 gap-4 rounded-lg border border-[#14E777]/35 bg-[#1A232C] p-5 shadow-[0_0_24px_-4px_rgba(20,231,119,0.18)] sm:grid-cols-2">
+        <div>
+          <p className="text-xs text-[#94A3B8]">
+            {dictionary.registration.feePreviewOrganizerPays}
+          </p>
+          <p className="font-heading mt-1 text-2xl font-bold tracking-tight tabular-nums text-[#F8FAFC]">
             {feePreview.listedFeeTry} {currency}
-          </strong>
-        </span>
+          </p>
+        </div>
+        <div>
+          <p className="text-xs text-[#BACBB9]">
+            {dictionary.registration.feePreviewGoalkeeperGets}
+          </p>
+          <p className="font-heading mt-1 text-3xl font-bold tracking-[-0.02em] tabular-nums text-[#14E777]">
+            {feePreview.goalkeeperNetPayoutTry} {currency}
+          </p>
+        </div>
       </div>
 
       <WeekdayPicker
@@ -268,7 +267,7 @@ export function RegistrationSportFields(props: RegistrationSportFieldsProps): Re
           className={INPUT_CLASS}
         />
         {fieldErrors.bio !== undefined && (
-          <p role="alert" className="mt-1.5 text-xs font-normal text-red-700">
+          <p role="alert" className="mt-1.5 text-xs font-medium text-[#FFB4AB]">
             {dictionary.validation[fieldErrors.bio]}
           </p>
         )}

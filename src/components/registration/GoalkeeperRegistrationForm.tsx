@@ -20,45 +20,9 @@ export interface GoalkeeperRegistrationFormProps {
   readonly onGoalkeeperRegistered: (profile: GoalkeeperProfile) => void;
 }
 
-interface RegistrationSectionHeaderProps {
-  readonly dictionary: AppDictionary;
-}
-
 /**
- * Architectural 6-column header band introducing the goalkeeper registration workflow.
- *
- * @param props - `RegistrationSectionHeaderProps` holding localized badge and title text.
- * @returns Hairline-divided grid header band.
- */
-function RegistrationSectionHeader({
-  dictionary,
-}: RegistrationSectionHeaderProps): React.JSX.Element {
-  return (
-    <div className="mx-auto grid max-w-[1440px] grid-cols-1 border-b border-[#DCDCE2] bg-[#F8F8FA] lg:grid-cols-6">
-      <div className="border-b border-[#DCDCE2] px-4 py-8 sm:px-8 lg:col-span-1 lg:border-r lg:border-b-0">
-        <span className="block text-[11px] font-light tracking-[0.18em] text-[#636262] uppercase">
-          04
-        </span>
-        <h2 className="mt-2 text-sm font-light tracking-[0.14em] text-[#161540] uppercase">
-          {dictionary.registration.sectionBadge}
-        </h2>
-      </div>
-
-      <div className="px-4 py-8 sm:px-10 lg:col-span-5">
-        <p className="font-heading text-2xl font-light text-[#161540] sm:text-3xl">
-          {dictionary.registration.sectionTitle}
-        </p>
-        <p className="mt-2 max-w-3xl text-sm font-light text-[#636262] sm:text-base">
-          {dictionary.registration.sectionSubtitle}
-        </p>
-      </div>
-    </div>
-  );
-}
-
-/**
- * Institutional goalkeeper self-registration section structured on a 6-column architectural
- * hairline grid, allowing athletes to publish their profile, match fee, and weekly schedule.
+ * Goalkeeper self-registration section under Electric Pitch dark styling allowing athletes
+ * to publish their profile, net-payout rate preview, and weekly schedule into the directory.
  *
  * Delegates state and schema validation to `useGoalkeeperRegistrationForm` and splits input
  * controls across `RegistrationBasicFields` and `RegistrationSportFields`.
@@ -83,69 +47,73 @@ export function GoalkeeperRegistrationForm({
   const isSubmitting = submitState === REQUEST_STATES.LOADING;
 
   return (
-    <section id="register-goalkeeper" className="border-b border-[#DCDCE2] bg-[#E8E8EC]/40">
-      <RegistrationSectionHeader dictionary={dictionary} />
-
-      <div className="mx-auto grid max-w-[1440px] grid-cols-1 lg:grid-cols-6">
-        <div className="hidden border-r border-[#DCDCE2] lg:col-span-1 lg:block" />
-
-        <div className="px-4 py-10 sm:px-10 lg:col-span-5">
-          <form
-            noValidate
-            onSubmit={(event) => {
-              void handleSubmit(event);
-            }}
-            className="max-w-3xl rounded-none border border-[#DCDCE2] bg-white p-6 sm:p-10"
-          >
-            <RegistrationBasicFields
-              draft={draft}
-              fieldErrors={fieldErrors}
-              dictionary={dictionary}
-              onUpdateField={updateField}
-            />
-
-            <RegistrationSportFields
-              draft={draft}
-              fieldErrors={fieldErrors}
-              dictionary={dictionary}
-              onUpdateField={updateField}
-              onToggleDay={toggleAvailableDay}
-            />
-
-            {submitState === REQUEST_STATES.SUCCESS && (
-              <div
-                role="status"
-                className="mt-6 flex items-center gap-2.5 rounded-none border border-[#161540] bg-[#161540] p-4 text-xs font-light text-white"
-              >
-                <CheckCircle2 className="h-4 w-4 shrink-0 text-white" aria-hidden="true" />
-                <span>{dictionary.registration.successMessage}</span>
-              </div>
-            )}
-
-            {apiErrorCode !== null && (
-              <div
-                role="alert"
-                className="mt-6 flex items-center gap-2.5 rounded-none border border-red-300 bg-red-50 p-4 text-xs font-normal text-red-900"
-              >
-                <AlertCircle className="h-4 w-4 shrink-0 text-red-700" aria-hidden="true" />
-                <span>{dictionary.apiErrors[apiErrorCode]}</span>
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-none border border-[#161540] bg-[#161540] py-4 text-xs font-normal tracking-[0.14em] text-white uppercase transition hover:bg-white hover:text-[#161540] focus-visible:ring-2 focus-visible:ring-[#161540] focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              <span>
-                {isSubmitting
-                  ? dictionary.registration.submittingButton
-                  : dictionary.registration.submitButton}
-              </span>
-              <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
-            </button>
-          </form>
+    <section id="register-goalkeeper" className="bg-[#0B0F12] py-16">
+      <div className="mx-auto max-w-7xl px-4 sm:px-8">
+        <div className="max-w-3xl">
+          <span className="font-heading text-xs font-bold tracking-[0.12em] text-[#14E777] uppercase">
+            04 // {dictionary.registration.sectionBadge}
+          </span>
+          <h2 className="mt-2 font-heading text-2xl font-bold tracking-[-0.02em] text-[#F8FAFC] sm:text-4xl">
+            {dictionary.registration.sectionTitle}
+          </h2>
+          <p className="mt-2 text-base text-[#94A3B8]">{dictionary.registration.sectionSubtitle}</p>
         </div>
+
+        <form
+          noValidate
+          onSubmit={(event) => {
+            void handleSubmit(event);
+          }}
+          className="mt-8 max-w-3xl rounded-xl border border-white/[0.08] bg-[#12181F]/90 p-6 backdrop-blur-md sm:p-10"
+        >
+          <RegistrationBasicFields
+            draft={draft}
+            fieldErrors={fieldErrors}
+            dictionary={dictionary}
+            onUpdateField={updateField}
+          />
+
+          <RegistrationSportFields
+            draft={draft}
+            fieldErrors={fieldErrors}
+            dictionary={dictionary}
+            onUpdateField={updateField}
+            onToggleDay={toggleAvailableDay}
+          />
+
+          {submitState === REQUEST_STATES.SUCCESS && (
+            <div
+              role="status"
+              className="mt-6 flex items-center gap-2.5 rounded-md border border-[#14E777]/40 bg-[#14E777]/15 p-4 text-xs font-medium text-[#7FFFA2]"
+            >
+              <CheckCircle2 className="h-4 w-4 shrink-0 text-[#14E777]" aria-hidden="true" />
+              <span>{dictionary.registration.successMessage}</span>
+            </div>
+          )}
+
+          {apiErrorCode !== null && (
+            <div
+              role="alert"
+              className="mt-6 flex items-center gap-2.5 rounded-md border border-[#FFB4AB]/30 bg-[#93000A]/30 p-4 text-xs font-medium text-[#FFDBD6]"
+            >
+              <AlertCircle className="h-4 w-4 shrink-0 text-[#FFB4AB]" aria-hidden="true" />
+              <span>{dictionary.apiErrors[apiErrorCode]}</span>
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-md bg-[#14E777] py-4 font-heading text-sm font-bold text-[#0B0F12] shadow-[0_0_24px_-4px_rgba(20,231,119,0.28)] transition duration-150 hover:bg-[#62FF95] hover:shadow-[0_0_28px_-2px_rgba(20,231,119,0.5)] focus-visible:ring-2 focus-visible:ring-[#14E777] focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            <span>
+              {isSubmitting
+                ? dictionary.registration.submittingButton
+                : dictionary.registration.submitButton}
+            </span>
+            <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+          </button>
+        </form>
       </div>
     </section>
   );

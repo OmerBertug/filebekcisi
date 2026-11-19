@@ -30,7 +30,7 @@ interface BookingTableRowProps {
 
 /**
  * Renders a single customer booking row showing organizer details, booked goalkeeper,
- * venue schedule, and dual-sided 15% + 15% commission figures.
+ * venue schedule, and dual-sided 15% + 15% commission revenue figures.
  */
 function BookingTableRow({
   booking,
@@ -40,39 +40,37 @@ function BookingTableRow({
 }: BookingTableRowProps): React.JSX.Element {
   const currency = dictionary.filters.currencySymbol;
   return (
-    <tr className="border-t border-[#DCDCE2] transition hover:bg-[#F8F8FA]">
+    <tr className="border-t border-white/[0.06] transition hover:bg-[#1A232C]">
       <td className="px-4 py-4">
-        <p className="font-normal text-[#161540]">{booking.organizerName}</p>
-        <p className="text-xs font-light text-[#636262]">{booking.organizerPhone}</p>
+        <p className="font-heading font-semibold text-[#F8FAFC]">{booking.organizerName}</p>
+        <p className="font-heading text-xs tabular-nums text-[#94A3B8]">{booking.organizerPhone}</p>
       </td>
       <td className="px-4 py-4">
-        <p className="font-normal text-[#161540]">{booking.goalkeeperName}</p>
-        <p className="text-xs font-light text-[#636262]">
-          {dictionary.districts[booking.district]}
-        </p>
+        <p className="font-heading font-semibold text-[#F8FAFC]">{booking.goalkeeperName}</p>
+        <p className="text-xs text-[#94A3B8]">{dictionary.districts[booking.district]}</p>
       </td>
-      <td className="px-4 py-4 text-xs font-light text-[#4C4C4C]">
-        <p className="font-normal text-[#161540]">{booking.venueName}</p>
+      <td className="px-4 py-4 text-xs text-[#94A3B8]">
+        <p className="font-medium text-[#E0E3E7]">{booking.venueName}</p>
         <p>
           {dictionary.days[booking.matchDate]} · {booking.matchTime}
         </p>
       </td>
-      <td className="px-4 py-4 text-xs font-light text-[#4C4C4C]">
+      <td className="px-4 py-4 text-xs text-[#94A3B8]">
         <p>
           {dictionary.admin.bookingCustomerPaysPrefix}{' '}
-          <strong className="font-normal text-[#161540]">
+          <strong className="font-heading font-semibold tabular-nums text-[#F8FAFC]">
             {booking.totalPayableTry} {currency}
           </strong>
         </p>
         <p>
           {dictionary.admin.bookingKeeperNetPrefix}{' '}
-          <strong className="font-normal text-[#161540]">
+          <strong className="font-heading font-semibold tabular-nums text-[#E0E3E7]">
             {booking.goalkeeperNetPayoutTry} {currency}
           </strong>
         </p>
         <p>
           {dictionary.admin.bookingPlatformCutPrefix}{' '}
-          <strong className="font-normal text-[#161540]">
+          <strong className="font-heading font-bold tabular-nums text-[#14E777]">
             +{booking.platformTotalRevenueTry} {currency}
           </strong>
         </p>
@@ -82,7 +80,7 @@ function BookingTableRow({
           type="button"
           disabled={isBusy}
           onClick={() => void onDeleteBooking(booking.id)}
-          className="inline-flex items-center gap-1 rounded-none border border-red-700 bg-white px-3 py-1.5 text-[11px] font-normal tracking-wider text-red-700 uppercase transition hover:bg-red-700 hover:text-white disabled:opacity-50"
+          className="inline-flex items-center gap-1 rounded-md border border-[#FFB4AB]/40 bg-[#93000A]/30 px-3 py-1.5 font-heading text-[11px] font-semibold tracking-wider text-[#FFB4AB] uppercase transition hover:bg-[#FFB4AB] hover:text-[#690005] disabled:opacity-50"
         >
           <Trash2 className="h-3 w-3" aria-hidden="true" />
           <span>{dictionary.admin.deleteButton}</span>
@@ -107,24 +105,22 @@ export function AdminBookingsTable({
 }: AdminBookingsTableProps): React.JSX.Element {
   return (
     <div className="mt-12 space-y-4">
-      <div className="border-l-2 border-[#161540] pl-4">
-        <h2 className="text-xl font-light text-[#161540]">
+      <div className="border-l-2 border-[#14E777] pl-4">
+        <h2 className="font-heading text-xl font-bold text-[#F8FAFC]">
           {dictionary.admin.bookingsSectionTitle}
         </h2>
-        <p className="mt-1 text-xs font-light text-[#636262]">
-          {dictionary.admin.bookingsSectionSubtitle}
-        </p>
+        <p className="mt-1 text-xs text-[#94A3B8]">{dictionary.admin.bookingsSectionSubtitle}</p>
       </div>
 
       {bookings.length === 0 ? (
-        <div className="rounded-none border border-[#DCDCE2] bg-white p-8 text-center text-sm font-light text-[#636262]">
+        <div className="rounded-lg border border-white/[0.08] bg-[#12181F] p-8 text-center text-sm text-[#94A3B8]">
           {dictionary.admin.emptyBookings}
         </div>
       ) : (
-        <div className="overflow-x-auto border border-[#DCDCE2] bg-white">
+        <div className="overflow-x-auto rounded-lg border border-white/[0.08] bg-[#12181F]">
           <table className="w-full border-collapse text-left text-sm">
             <thead>
-              <tr className="bg-[#F8F8FA] text-[11px] font-normal tracking-[0.1em] text-[#636262] uppercase">
+              <tr className="bg-[#1A232C] font-heading text-[11px] font-semibold tracking-[0.1em] text-[#94A3B8] uppercase">
                 <th className="px-4 py-3.5">{dictionary.admin.bookingHeaderOrganizer}</th>
                 <th className="px-4 py-3.5">{dictionary.admin.bookingHeaderKeeper}</th>
                 <th className="px-4 py-3.5">{dictionary.admin.bookingHeaderSchedule}</th>

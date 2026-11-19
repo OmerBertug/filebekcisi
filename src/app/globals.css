@@ -5,27 +5,34 @@
 
 @theme inline {
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-heading: var(--font-plus-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
 }
 
 :root {
-  --surface-primary: #f8f8fa;
-  --surface-secondary: #e8e8ec;
-  --surface-card: #ffffff;
-  --ink-navy: #161540;
-  --ink-body: #4c4c4c;
-  --ink-muted: #636262;
-  --border-hairline: #dcdce2;
+  --pitch-void: #0b0f12;
+  --pitch-surface: #12181f;
+  --pitch-elevated: #1a232c;
+  --pitch-overlay: #222e3a;
+  --neon-lime: #14e777;
+  --signal-emerald: #10b981;
+  --turf-green: #22c55e;
+  --text-display: #f8fafc;
+  --text-body: #e0e3e7;
+  --text-muted: #94a3b8;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-prominent: rgba(20, 231, 119, 0.35);
 }
 
 html {
   scroll-behavior: smooth;
-  background-color: var(--surface-primary);
-  color: var(--ink-body);
+  background-color: var(--pitch-void);
+  color: var(--text-body);
   font-family: var(--font-sans);
 }
 
 body {
+  background-color: var(--pitch-void);
+  color: var(--text-body);
   font-family: var(--font-sans);
 }
 
@@ -36,4 +43,11 @@ h4,
 h5,
 h6 {
   font-family: var(--font-heading);
+}
+
+.pitch-grid-bg {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
 }

@@ -32,7 +32,7 @@ interface FilterSelectFieldProps {
 }
 
 /**
- * Architectural select input pairing an uppercase label with a square hairline-bordered `<select>`.
+ * Technical dark-mode select control pairing an uppercase Geist label with a `#1A232C` input.
  *
  * @param props - `FilterSelectFieldProps` specifying field identity, options, and change callback.
  * @returns Labeled dropdown element.
@@ -48,7 +48,7 @@ function FilterSelectField({
     <div>
       <label
         htmlFor={id}
-        className="block text-[11px] font-normal tracking-[0.1em] text-[#636262] uppercase"
+        className="block font-heading text-xs font-semibold tracking-[0.06em] text-[#94A3B8] uppercase"
       >
         {label}
       </label>
@@ -56,7 +56,7 @@ function FilterSelectField({
         id={id}
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="mt-2 w-full rounded-none border border-[#DCDCE2] bg-[#F8F8FA] px-3 py-2.5 text-sm font-light text-[#161540] transition focus:border-[#161540] focus:bg-white focus:outline-none"
+        className="mt-1.5 w-full rounded-md border border-white/[0.12] bg-[#1A232C] px-3 py-2.5 text-sm text-[#F8FAFC] transition duration-150 focus:border-[#14E777] focus:ring-1 focus:ring-[#14E777] focus:outline-none"
       >
         {options.map((opt) => (
           <option key={opt.value} value={opt.value}>
@@ -85,11 +85,11 @@ export interface DirectoryFilterBarProps {
 }
 
 /**
- * Architectural search bar filtering registered goalkeepers by district, experience tier,
- * weekday availability, and maximum match fee.
+ * Electric Pitch organizer search control bar filtering goalkeepers by district, experience
+ * tier, weekday availability, and maximum match fee.
  *
  * @param props - `DirectoryFilterBarProps` binding filter state and callbacks.
- * @returns Rendered hairline-bordered filter control panel.
+ * @returns Rendered dark glassmorphic filter control panel.
  */
 export function DirectoryFilterBar({
   dictionary,
@@ -122,7 +122,7 @@ export function DirectoryFilterBar({
   ];
 
   return (
-    <div className="rounded-none border border-[#DCDCE2] bg-white p-6">
+    <div className="rounded-lg border border-white/[0.08] bg-[#12181F]/90 p-5 backdrop-blur-md">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <FilterSelectField
           id="filter-district"
@@ -172,15 +172,15 @@ export function DirectoryFilterBar({
         />
       </div>
 
-      <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-[#DCDCE2] pt-4">
-        <p aria-live="polite" className="text-xs font-light text-[#636262]">
-          <span className="font-normal text-[#161540]">{resultCount}</span>{' '}
+      <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-white/[0.06] pt-4">
+        <p aria-live="polite" className="text-xs text-[#94A3B8]">
+          <span className="font-heading font-bold tabular-nums text-[#14E777]">{resultCount}</span>{' '}
           {dictionary.filters.resultsCountSuffix}
         </p>
         <button
           type="button"
           onClick={onReset}
-          className="inline-flex items-center gap-2 rounded-none border border-[#DCDCE2] bg-[#F8F8FA] px-3.5 py-1.5 text-[11px] font-normal tracking-[0.1em] text-[#4C4C4C] uppercase transition hover:border-[#161540] hover:bg-white hover:text-[#161540]"
+          className="inline-flex items-center gap-1.5 text-xs font-medium text-[#94A3B8] underline-offset-4 transition hover:text-[#F8FAFC] hover:underline"
         >
           <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
           <span>{dictionary.filters.resetFilters}</span>

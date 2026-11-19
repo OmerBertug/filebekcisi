@@ -10,7 +10,7 @@ import { AdminBookingsTable } from '@/components/admin/AdminBookingsTable';
 import { AdminDashboardTable } from '@/components/admin/AdminDashboardTable';
 import { AdminLoginPanel } from '@/components/admin/AdminLoginPanel';
 import { SiteFooter } from '@/components/layout/SiteFooter';
-import type { ApiErrorCode, BookingRecord, GoalkeeperProfile } from '@/domain/goalkeeper';
+import type { ApiErrorCode, BookingRecord, GoalkeeperProfile, Result } from '@/domain/goalkeeper';
 import { useGoalkeepers } from '@/hooks/useGoalkeepers';
 import {
   DEFAULT_LOCALE,
@@ -38,8 +38,7 @@ interface AdminTopBarProps {
 }
 
 /**
- * Top navigation bar for the private `/admin` route with platform return link, locale switcher,
- * and session sign-out button.
+ * Top navigation bar for `/admin` with return link, locale switcher, and session sign-out button.
  */
 function AdminTopBar({
   dictionary,
@@ -49,46 +48,42 @@ function AdminTopBar({
   onLogout,
 }: AdminTopBarProps): React.JSX.Element {
   return (
-    <header className="border-b border-[#DCDCE2] bg-white">
-      <div className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-between gap-4 px-4 py-4 sm:px-8">
+    <header className="border-b border-white/[0.08] bg-[#0B0F12]/90 backdrop-blur-md">
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-4 sm:px-8">
         <div className="flex items-center gap-3">
-          <span className="flex h-9 w-9 items-center justify-center rounded-none bg-[#161540] text-white">
+          <span className="flex h-9 w-9 items-center justify-center rounded-md border border-[#14E777]/35 bg-[#14E777]/10 text-[#14E777]">
             <Shield className="h-4 w-4" aria-hidden="true" />
           </span>
           <div>
-            <p className="font-heading text-sm font-medium tracking-[0.14em] text-[#161540] uppercase">
+            <p className="font-heading text-sm font-bold tracking-[0.12em] text-[#F8FAFC] uppercase">
               {dictionary.meta.brandName}
             </p>
-            <p className="text-[11px] font-light tracking-wider text-[#636262]">
-              {dictionary.admin.badge}
-            </p>
+            <p className="text-[11px] text-[#94A3B8]">{dictionary.admin.badge}</p>
           </div>
         </div>
 
         <div className="flex items-center gap-3">
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 rounded-none border border-[#DCDCE2] bg-[#F8F8FA] px-3.5 py-2 text-xs font-normal tracking-wider text-[#161540] uppercase transition hover:border-[#161540] hover:bg-white"
+            className="inline-flex items-center gap-1.5 rounded-md border border-white/[0.12] bg-[#12181F] px-3.5 py-2 font-heading text-xs font-semibold tracking-wide text-[#F8FAFC] transition hover:border-[#14E777]/50 hover:bg-[#1A232C]"
           >
             <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
             <span>{dictionary.admin.backToSite}</span>
           </Link>
-
           {isAuthenticated && (
             <button
               type="button"
               onClick={() => void onLogout()}
-              className="inline-flex items-center gap-1.5 rounded-none border border-[#161540] bg-[#161540] px-3.5 py-2 text-xs font-normal tracking-wider text-white uppercase transition hover:bg-white hover:text-[#161540]"
+              className="inline-flex items-center gap-1.5 rounded-md border border-white/25 bg-transparent px-3.5 py-2 font-heading text-xs font-semibold tracking-wide text-[#F8FAFC] transition hover:border-[#FFB4AB]/50 hover:text-[#FFB4AB]"
             >
               <LogOut className="h-3.5 w-3.5" aria-hidden="true" />
               <span>{dictionary.admin.logoutButton}</span>
             </button>
           )}
-
           <div
             role="group"
             aria-label={dictionary.meta.switchLocaleLabel}
-            className="flex items-center border border-[#DCDCE2] bg-white p-0.5"
+            className="flex items-center rounded-md border border-white/[0.08] bg-[#12181F] p-0.5"
           >
             {SUPPORTED_LOCALES.map((item) => (
               <button
@@ -96,8 +91,10 @@ function AdminTopBar({
                 type="button"
                 aria-pressed={item === locale}
                 onClick={() => onLocaleChange(item)}
-                className={`px-2 py-1 text-[11px] font-normal uppercase ${
-                  item === locale ? 'bg-[#161540] text-white' : 'text-[#636262]'
+                className={`rounded px-2.5 py-1 font-heading text-[11px] font-semibold uppercase ${
+                  item === locale
+                    ? 'bg-[#14E777] text-[#0B0F12]'
+                    : 'text-[#94A3B8] hover:text-[#F8FAFC]'
                 }`}
               >
                 {item}
@@ -121,7 +118,7 @@ interface AuthenticatedConsoleBodyProps {
 }
 
 /**
- * Renders the 6-column header, goalkeeper moderation table, and incoming bookings table.
+ * Renders the authenticated moderation header, goalkeeper roster table, and bookings table.
  */
 function AuthenticatedConsoleBody({
   goalkeepers,
@@ -133,22 +130,18 @@ function AuthenticatedConsoleBody({
   onDeleteBooking,
 }: AuthenticatedConsoleBodyProps): React.JSX.Element {
   return (
-    <section className="border-b border-[#DCDCE2]">
-      <div className="mx-auto grid max-w-[1440px] grid-cols-1 border-b border-[#DCDCE2] bg-white lg:grid-cols-6">
-        <div className="border-b border-[#DCDCE2] bg-[#161540] px-4 py-8 text-white sm:px-8 lg:col-span-1 lg:border-r lg:border-b-0">
-          <span className="block text-[11px] font-light tracking-[0.16em] text-white/75 uppercase">
+    <section className="border-b border-white/[0.06] bg-[#0B0F12] py-12">
+      <div className="mx-auto max-w-7xl px-4 sm:px-8">
+        <div className="mb-8 border-b border-white/[0.06] pb-6">
+          <span className="font-heading text-xs font-bold tracking-[0.12em] text-[#14E777] uppercase">
             {dictionary.admin.badge}
           </span>
-        </div>
-        <div className="px-4 py-8 sm:px-10 lg:col-span-5">
-          <h1 className="text-2xl font-light text-[#161540] sm:text-3xl">
+          <h1 className="mt-2 font-heading text-2xl font-bold text-[#F8FAFC] sm:text-3xl">
             {dictionary.admin.title}
           </h1>
-          <p className="mt-2 text-sm font-light text-[#636262]">{dictionary.admin.subtitle}</p>
+          <p className="mt-2 text-sm text-[#94A3B8]">{dictionary.admin.subtitle}</p>
         </div>
-      </div>
 
-      <div className="mx-auto max-w-[1440px] px-4 py-10 sm:px-10">
         <AdminDashboardTable
           goalkeepers={goalkeepers}
           dictionary={dictionary}
@@ -156,7 +149,6 @@ function AuthenticatedConsoleBody({
           onToggleVerified={onToggleVerified}
           onDeleteGoalkeeper={onDeleteGoalkeeper}
         />
-
         <AdminBookingsTable
           bookings={bookings}
           dictionary={dictionary}
@@ -195,20 +187,32 @@ export function AdminWorkspace(): React.JSX.Element {
   useEffect(() => {
     const controller = new AbortController();
     fetchAdminSession(controller.signal)
-      .then((result) => {
-        if (result.ok && result.data.authenticated) {
+      .then((res) => {
+        if (res.ok && res.data.authenticated) {
           setIsAuthenticated(true);
           return loadBookings(controller.signal);
         }
         return undefined;
       })
-      .catch(() => {
-        // Ignore AbortError on unmount.
-      });
-    return () => {
-      controller.abort();
-    };
+      .catch(() => undefined);
+    return () => controller.abort();
   }, [loadBookings]);
+
+  const runMutation = useCallback(
+    async <TData,>(
+      id: string,
+      action: () => Promise<Result<TData, ApiErrorCode>>,
+      refresh: () => void | Promise<void>,
+    ): Promise<void> => {
+      setBusyId(id);
+      const result = await action();
+      setBusyId(null);
+      if (result.ok) {
+        await refresh();
+      }
+    },
+    [],
+  );
 
   const handleLogin = useCallback(
     async (password: string): Promise<void> => {
@@ -233,44 +237,8 @@ export function AdminWorkspace(): React.JSX.Element {
     setIsAuthenticated(false);
   }, []);
 
-  const handleToggleVerified = useCallback(
-    async (id: string, nextVerified: boolean): Promise<void> => {
-      setBusyId(id);
-      const result = await setGoalkeeperVerification(id, nextVerified);
-      setBusyId(null);
-      if (result.ok) {
-        reload();
-      }
-    },
-    [reload],
-  );
-
-  const handleDeleteGoalkeeper = useCallback(
-    async (id: string): Promise<void> => {
-      setBusyId(id);
-      const result = await removeGoalkeeper(id);
-      setBusyId(null);
-      if (result.ok) {
-        reload();
-      }
-    },
-    [reload],
-  );
-
-  const handleDeleteBooking = useCallback(
-    async (id: string): Promise<void> => {
-      setBusyId(id);
-      const result = await removeBooking(id);
-      setBusyId(null);
-      if (result.ok) {
-        await loadBookings();
-      }
-    },
-    [loadBookings],
-  );
-
   return (
-    <div className="flex min-h-screen flex-col bg-[#F8F8FA] text-[#4C4C4C]">
+    <div className="flex min-h-screen flex-col bg-[#0B0F12] text-[#E0E3E7]">
       <AdminTopBar
         dictionary={dictionary}
         locale={locale}
@@ -292,9 +260,11 @@ export function AdminWorkspace(): React.JSX.Element {
             bookings={bookings}
             dictionary={dictionary}
             busyId={busyId}
-            onToggleVerified={handleToggleVerified}
-            onDeleteGoalkeeper={handleDeleteGoalkeeper}
-            onDeleteBooking={handleDeleteBooking}
+            onToggleVerified={(id, next) =>
+              runMutation(id, () => setGoalkeeperVerification(id, next), reload)
+            }
+            onDeleteGoalkeeper={(id) => runMutation(id, () => removeGoalkeeper(id), reload)}
+            onDeleteBooking={(id) => runMutation(id, () => removeBooking(id), loadBookings)}
           />
         )}
       </main>

@@ -13,33 +13,37 @@ interface AdminStatsBarProps {
 }
 
 /**
- * Three-cell architectural KPI summary displaying total, verified, and pending goalkeeper counts.
+ * Three-cell dark glassmorphic KPI summary displaying total, verified, and pending goalkeeper counts.
  */
 function AdminStatsBar({ goalkeepers, dictionary }: AdminStatsBarProps): React.JSX.Element {
   const verifiedCount = goalkeepers.filter((item) => item.isVerified).length;
   const pendingCount = goalkeepers.length - verifiedCount;
 
   return (
-    <dl className="grid grid-cols-1 divide-y divide-[#DCDCE2] border border-[#DCDCE2] bg-white sm:grid-cols-3 sm:divide-x sm:divide-y-0">
-      <div className="p-5">
-        <dt className="text-[11px] font-normal tracking-[0.12em] text-[#636262] uppercase">
+    <dl className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="rounded-lg border border-white/[0.08] bg-[#12181F] p-5">
+        <dt className="font-heading text-xs font-semibold tracking-[0.08em] text-[#94A3B8] uppercase">
           {dictionary.admin.totalKeepersLabel}
         </dt>
-        <dd className="font-heading mt-1.5 text-2xl font-light text-[#161540]">
+        <dd className="font-heading mt-1.5 text-3xl font-bold tabular-nums text-[#F8FAFC]">
           {goalkeepers.length}
         </dd>
       </div>
-      <div className="p-5">
-        <dt className="text-[11px] font-normal tracking-[0.12em] text-[#636262] uppercase">
+      <div className="rounded-lg border border-[#14E777]/30 bg-[#12181F] p-5">
+        <dt className="font-heading text-xs font-semibold tracking-[0.08em] text-[#94A3B8] uppercase">
           {dictionary.admin.verifiedKeepersLabel}
         </dt>
-        <dd className="font-heading mt-1.5 text-2xl font-light text-[#161540]">{verifiedCount}</dd>
+        <dd className="font-heading mt-1.5 text-3xl font-bold tabular-nums text-[#14E777]">
+          {verifiedCount}
+        </dd>
       </div>
-      <div className="p-5">
-        <dt className="text-[11px] font-normal tracking-[0.12em] text-[#636262] uppercase">
+      <div className="rounded-lg border border-white/[0.08] bg-[#12181F] p-5">
+        <dt className="font-heading text-xs font-semibold tracking-[0.08em] text-[#94A3B8] uppercase">
           {dictionary.admin.pendingKeepersLabel}
         </dt>
-        <dd className="font-heading mt-1.5 text-2xl font-light text-[#161540]">{pendingCount}</dd>
+        <dd className="font-heading mt-1.5 text-3xl font-bold tabular-nums text-[#F8FAFC]">
+          {pendingCount}
+        </dd>
       </div>
     </dl>
   );
@@ -80,29 +84,29 @@ function KeeperTableRow({
   onDeleteGoalkeeper,
 }: KeeperTableRowProps): React.JSX.Element {
   return (
-    <tr className="border-t border-[#DCDCE2] transition hover:bg-[#F8F8FA]">
+    <tr className="border-t border-white/[0.06] transition hover:bg-[#1A232C]">
       <td className="px-4 py-4">
-        <p className="font-normal text-[#161540]">{profile.fullName}</p>
-        <p className="text-xs font-light text-[#636262]">
+        <p className="font-heading font-semibold text-[#F8FAFC]">{profile.fullName}</p>
+        <p className="text-xs text-[#94A3B8]">
           {dictionary.experienceLevels[profile.experienceLevel]} · {profile.age}{' '}
           {dictionary.card.ageUnit}
         </p>
       </td>
-      <td className="px-4 py-4 text-xs font-light text-[#4C4C4C]">
-        {dictionary.districts[profile.district]}
-      </td>
-      <td className="px-4 py-4 text-xs font-normal text-[#161540]">
+      <td className="px-4 py-4 text-xs text-[#E0E3E7]">{dictionary.districts[profile.district]}</td>
+      <td className="px-4 py-4 font-heading text-xs font-semibold tabular-nums text-[#F8FAFC]">
         {profile.matchFeeTry} {dictionary.filters.currencySymbol}
       </td>
-      <td className="px-4 py-4 text-xs font-light text-[#4C4C4C]">{profile.phone}</td>
+      <td className="px-4 py-4 font-heading text-xs tabular-nums text-[#94A3B8]">
+        {profile.phone}
+      </td>
       <td className="px-4 py-4">
         {profile.isVerified ? (
-          <span className="inline-flex items-center gap-1 rounded-none border border-[#161540]/30 bg-[#F8F8FA] px-2 py-0.5 text-[10px] font-normal tracking-wider text-[#161540] uppercase">
+          <span className="inline-flex items-center gap-1 rounded-full border border-[#10B981]/40 bg-[#10B981]/10 px-2.5 py-0.5 font-heading text-[10px] font-semibold tracking-wider text-[#14E777] uppercase">
             <BadgeCheck className="h-3 w-3" aria-hidden="true" />
             {dictionary.admin.statusVerified}
           </span>
         ) : (
-          <span className="inline-flex items-center gap-1 rounded-none border border-[#DCDCE2] bg-white px-2 py-0.5 text-[10px] font-normal tracking-wider text-[#636262] uppercase">
+          <span className="inline-flex items-center gap-1 rounded-full border border-white/[0.12] bg-[#1A232C] px-2.5 py-0.5 font-heading text-[10px] font-medium tracking-wider text-[#94A3B8] uppercase">
             <ShieldAlert className="h-3 w-3" aria-hidden="true" />
             {dictionary.admin.statusPending}
           </span>
@@ -114,7 +118,7 @@ function KeeperTableRow({
             type="button"
             disabled={isBusy}
             onClick={() => void onToggleVerified(profile.id, !profile.isVerified)}
-            className="rounded-none border border-[#161540] bg-[#161540] px-3 py-1.5 text-[11px] font-normal tracking-wider text-white uppercase transition hover:bg-white hover:text-[#161540] disabled:opacity-50"
+            className="rounded-md bg-[#14E777] px-3 py-1.5 font-heading text-[11px] font-bold tracking-wider text-[#0B0F12] uppercase transition hover:bg-[#62FF95] disabled:opacity-50"
           >
             {profile.isVerified ? dictionary.admin.revokeButton : dictionary.admin.approveButton}
           </button>
@@ -122,7 +126,7 @@ function KeeperTableRow({
             type="button"
             disabled={isBusy}
             onClick={() => void onDeleteGoalkeeper(profile.id)}
-            className="inline-flex items-center gap-1 rounded-none border border-red-700 bg-white px-3 py-1.5 text-[11px] font-normal tracking-wider text-red-700 uppercase transition hover:bg-red-700 hover:text-white disabled:opacity-50"
+            className="inline-flex items-center gap-1 rounded-md border border-[#FFB4AB]/40 bg-[#93000A]/30 px-3 py-1.5 font-heading text-[11px] font-semibold tracking-wider text-[#FFB4AB] uppercase transition hover:bg-[#FFB4AB] hover:text-[#690005] disabled:opacity-50"
           >
             <Trash2 className="h-3 w-3" aria-hidden="true" />
             <span>{dictionary.admin.deleteButton}</span>
@@ -134,8 +138,8 @@ function KeeperTableRow({
 }
 
 /**
- * Administrator moderation console table allowing authorized staff to approve, revoke, or remove
- * goalkeeper profiles.
+ * Administrator moderation console table under Electric Pitch dark styling allowing authorized
+ * staff to approve, revoke, or remove goalkeeper profiles.
  *
  * @param props - `AdminDashboardTableProps` binding profiles and moderation callbacks.
  * @returns Rendered KPI bar and moderation table.
@@ -152,14 +156,14 @@ export function AdminDashboardTable({
       <AdminStatsBar goalkeepers={goalkeepers} dictionary={dictionary} />
 
       {goalkeepers.length === 0 ? (
-        <div className="rounded-none border border-[#DCDCE2] bg-white p-10 text-center text-sm font-light text-[#636262]">
+        <div className="rounded-lg border border-white/[0.08] bg-[#12181F] p-10 text-center text-sm text-[#94A3B8]">
           {dictionary.admin.emptyDirectory}
         </div>
       ) : (
-        <div className="overflow-x-auto border border-[#DCDCE2] bg-white">
+        <div className="overflow-x-auto rounded-lg border border-white/[0.08] bg-[#12181F]">
           <table className="w-full border-collapse text-left text-sm">
             <thead>
-              <tr className="bg-[#F8F8FA] text-[11px] font-normal tracking-[0.1em] text-[#636262] uppercase">
+              <tr className="bg-[#1A232C] font-heading text-[11px] font-semibold tracking-[0.1em] text-[#94A3B8] uppercase">
                 <th className="px-4 py-3.5">{dictionary.admin.tableHeaderKeeper}</th>
                 <th className="px-4 py-3.5">{dictionary.admin.tableHeaderDistrict}</th>
                 <th className="px-4 py-3.5">{dictionary.admin.tableHeaderFee}</th>

@@ -32,11 +32,11 @@ export interface GoalkeeperGridProps {
 }
 
 /**
- * Renders the responsive goalkeeper directory grid along with accessible loading, error,
- * and empty-filter architectural feedback panels.
+ * Renders the responsive goalkeeper directory grid along with accessible dark-mode loading,
+ * error, and empty-filter feedback panels.
  *
  * @param props - `GoalkeeperGridProps` describing current profiles, loading status, and handlers.
- * @returns Rendered directory state or responsive card grid.
+ * @returns Rendered directory state or responsive 3-column card grid.
  */
 export function GoalkeeperGrid({
   goalkeepers,
@@ -51,7 +51,7 @@ export function GoalkeeperGrid({
       <div
         role="status"
         aria-live="polite"
-        className="mt-6 rounded-none border border-[#DCDCE2] bg-white p-10 text-center text-sm font-light text-[#636262]"
+        className="mt-6 rounded-lg border border-white/[0.08] bg-[#12181F] p-10 text-center text-sm text-[#94A3B8]"
       >
         {dictionary.grid.loadingMessage}
       </div>
@@ -64,14 +64,14 @@ export function GoalkeeperGrid({
     return (
       <div
         role="alert"
-        className="mt-6 flex flex-col items-center rounded-none border border-red-300 bg-red-50 p-8 text-center"
+        className="mt-6 flex flex-col items-center rounded-lg border border-[#FFB4AB]/30 bg-[#93000A]/30 p-8 text-center"
       >
-        <AlertCircle className="h-8 w-8 text-red-700" aria-hidden="true" />
-        <p className="mt-3 text-sm font-normal text-red-900">{errorMessage}</p>
+        <AlertCircle className="h-8 w-8 text-[#FFB4AB]" aria-hidden="true" />
+        <p className="mt-3 text-sm font-medium text-[#FFDBD6]">{errorMessage}</p>
         <button
           type="button"
           onClick={onRetry}
-          className="mt-4 rounded-none border border-red-700 bg-red-700 px-5 py-2 text-xs font-normal tracking-wider text-white uppercase transition hover:bg-white hover:text-red-700"
+          className="mt-4 rounded-md border border-[#FFB4AB]/40 bg-[#93000A] px-5 py-2 font-heading text-xs font-semibold tracking-wider text-[#FFDBD6] uppercase transition hover:bg-[#FFB4AB] hover:text-[#690005]"
         >
           {dictionary.grid.retryButton}
         </button>
@@ -81,18 +81,18 @@ export function GoalkeeperGrid({
 
   if (goalkeepers.length === 0) {
     return (
-      <div className="mt-6 flex flex-col items-center rounded-none border border-[#DCDCE2] bg-white p-10 text-center">
-        <SearchX className="h-8 w-8 text-[#636262]" aria-hidden="true" />
-        <h3 className="mt-3 text-base font-normal text-[#161540]">{dictionary.grid.emptyTitle}</h3>
-        <p className="mt-1 max-w-md text-sm font-light text-[#636262]">
-          {dictionary.grid.emptyDescription}
-        </p>
+      <div className="mt-6 flex flex-col items-center rounded-lg border border-white/[0.08] bg-[#12181F] p-10 text-center">
+        <SearchX className="h-8 w-8 text-[#94A3B8]" aria-hidden="true" />
+        <h3 className="mt-3 font-heading text-base font-semibold text-[#F8FAFC]">
+          {dictionary.grid.emptyTitle}
+        </h3>
+        <p className="mt-1.5 max-w-md text-sm text-[#94A3B8]">{dictionary.grid.emptyDescription}</p>
       </div>
     );
   }
 
   return (
-    <div className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+    <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
       {goalkeepers.map((profile) => (
         <GoalkeeperCard
           key={profile.id}

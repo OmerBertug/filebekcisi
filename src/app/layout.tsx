@@ -9,29 +9,29 @@ import './globals.css';
 const defaultDictionary = getDictionary(DEFAULT_LOCALE);
 
 /**
- * Self-hosted Plus Jakarta Sans variable font (`200`–`800` weight range, Latin + Latin-Extended)
- * assigned to `--font-plus-jakarta` for all architectural headings and display titles.
+ * Self-hosted Geist variable font (`100`–`900` weight range, Latin + Latin-Extended)
+ * assigned to `--font-geist` for headings, tactical display metrics, and monospaced indexes.
  */
-const plusJakartaSans = localFont({
+const geist = localFont({
   src: [
     {
-      path: './fonts/plus-jakarta-sans-latin.woff2',
-      weight: '200 800',
+      path: './fonts/geist-latin.woff2',
+      weight: '100 900',
       style: 'normal',
     },
     {
-      path: './fonts/plus-jakarta-sans-latin-ext.woff2',
-      weight: '200 800',
+      path: './fonts/geist-latin-ext.woff2',
+      weight: '100 900',
       style: 'normal',
     },
   ],
-  variable: '--font-plus-jakarta',
+  variable: '--font-geist',
   display: 'swap',
 });
 
 /**
  * Self-hosted Inter variable font (`100`–`900` weight range, Latin + Latin-Extended)
- * assigned to `--font-inter` for all body copy, form inputs, and UI controls.
+ * assigned to `--font-inter` for sustained legibility across body copy and dense forms.
  */
 const inter = localFont({
   src: [
@@ -66,16 +66,16 @@ export interface RootLayoutProps {
 }
 
 /**
- * Root HTML shell wrapping all application routes with Plus Jakarta Sans (headings) and Inter
- * (body) variable font CSS custom properties and baseline antialiasing.
+ * Root HTML shell wrapping all application routes with Electric Pitch dark theming (`#0B0F12`),
+ * Geist (headings) and Inter (body) variable font CSS custom properties, and antialiasing.
  *
  * @param props - `RootLayoutProps` containing nested route nodes.
  * @returns Root `<html>` and `<body>` document tree.
  */
 export default function RootLayout({ children }: RootLayoutProps): React.JSX.Element {
   return (
-    <html lang={DEFAULT_LOCALE} className={`${plusJakartaSans.variable} ${inter.variable}`}>
-      <body className="font-sans antialiased selection:bg-[#161540] selection:text-white">
+    <html lang={DEFAULT_LOCALE} className={`${geist.variable} ${inter.variable}`}>
+      <body className="bg-[#0B0F12] font-sans text-[#E0E3E7] antialiased selection:bg-[#14E777] selection:text-[#0B0F12]">
         {children}
       </body>
     </html>
